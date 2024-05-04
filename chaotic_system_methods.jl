@@ -5,14 +5,14 @@ This file initialises methods required to simulate chaotic systems
 ## Plots and Gadly are both plotting packages a plot command
 
 import Plots as pl #The Extremes package uses Gadfly as its plotting package this distinguishes packaes
-using Plots, Extremes, Distributions, Gadfly, LaTeXStrings
+using Plots, Extremes, Distributions, Gadfly, LaTeXStrings, Cairo, Fontconfig
 
 set_default_plot_size(25cm, 20cm) ### Choosing a default plot size
 
 ##### Simulating our Chaotic Map 
-function chaotic_map(a, n_steps)
+function chaotic_map(a, n_steps) #gives normal map
     y_values = Float64[]
-
+    
     for i in 0:1/n_steps:1
         x = (a*i) % 1
         push!(y_values, x)
@@ -21,12 +21,12 @@ function chaotic_map(a, n_steps)
     return y_values
 end
 
-function T_mod_map(start, n)
+function T_mod_map(a, start, n) #gives composition n times
     y_values = Float64[]
     x = start
 
-    for i in 0:n
-        x = (3*x) % 1
+    for i in 0:1/n:1
+        x = (a*x) % 1
         push!(y_values, x)
 
     end
@@ -34,13 +34,13 @@ function T_mod_map(start, n)
 end
 
 ### Perturbed System
-function T_mod_map_noisey(start, n)
+function T_mod_map_noisey(a, start, n)  #gives composition n times with perturbations
     y_values = Float64[]
     x = start
     normal_dist_t = Normal(0, 1/(10^6))
 
-    for i in 0:n
-        x = (3*x) % 1 + rand(normal_dist_t)
+    for i in 1:n
+        x = (a*x) % 1 + rand(normal_dist_t)
         push!(y_values, x)
 
     end
