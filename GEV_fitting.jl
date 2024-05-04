@@ -1,6 +1,9 @@
+include("chaotic_system_methods.jl")
+
 
 import Plots as pl
-using Plots, Extremes, Dates, DataFrames, Distributions, Gadfly, LaTeXStrings
+using Plots, Extremes, Distributions, Gadfly, LaTeXStrings
+
 set_default_plot_size(25cm, 20cm)
 #CHAOS MAP
 function chaotic_map(a, n_steps)
