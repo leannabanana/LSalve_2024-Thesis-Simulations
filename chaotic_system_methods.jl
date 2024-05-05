@@ -37,7 +37,7 @@ end
 function T_mod_map_noisey(a, start, n)  #gives composition n times with perturbations
     y_values = Float64[]
     x = start
-    normal_dist_t = Normal(0, 1/(10^6))
+    normal_dist_t = Normal(0, 1/(10^3))
 
     for i in 1:n
         x = (a*x) % 1 + rand(normal_dist_t)
