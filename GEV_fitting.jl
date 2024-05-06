@@ -3,7 +3,7 @@ This file outputs simulations + fits GEV according to methods in "chaotic_system
 """
 
 include("chaotic_system_methods.jl")
-Date = "05-05-24_10^3-perturbation)"
+Date = "_06-05-24_10^-3"
 #Define Constants
 a = 3
 alpha = 1/6
@@ -57,4 +57,4 @@ d3 = diagnosticplots(fit_obs3)
 #Save Diagnostic Tests
 draw(PDF("Output_Images/gev_diagnostic_tests/obs1"*Date*".pdf", 25cm, 15cm), d1)
 draw(PDF("Output_Images/gev_diagnostic_tests/obs2"*Date*".pdf",25cm, 15cm), d2)
-draw(PDF("Output_Images/gev_diagnostic_tests/obs3"*Date*".png", 25cm, 15cm), d3)
+draw(PDF("Output_Images/gev_diagnostic_tests/obs3"*Date*".pdf", 25cm, 15cm), d3)
