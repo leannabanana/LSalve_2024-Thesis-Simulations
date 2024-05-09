@@ -29,19 +29,22 @@ y_obs_3 = observable_three(T_mod_map_noisey(a, interations, pertubation), x0 , c
 ### We plot the scatter plots onto T(x)
 #Observable 1
  
-scatter(y_n[1:end-1],y_n[2:end], ms=2, ma=0.5, mc=:lightblue,  xlims=(0,1), legend=false)
+orbit = scatter(y_n[1:end-1],y_n[2:end], ms=2, ma=0.5, mc=:lightblue,  xlims=(0,1), legend=false)
 p1 = scatter!(x_map, y_obs_1, mc =:pink, ms=2, ma=0.5, title=L"\phi = d(x, x_0)^{-α}")
 
 #Observable 2
-scatter(y_n[1:end-1],y_n[2:end], ms=2, ma=0.5, mc=:lightblue, xlims=(0,1), legend=false)
+orbit_2 = scatter(y_n[1:end-1],y_n[2:end], ms=2, ma=0.5, mc=:lightblue, xlims=(0,1), legend=false)
 p2 = scatter!(x_map, y_obs_2, mc =:pink, ms=2, ma=0.5, title=L"\phi = -log(d(x, x_0))")
 
 #Observable 3
-scatter(y_n[1:end-1],y_n[2:end], ms=2, ma=0.5, mc=:lightblue, xlims=(0,1), legend=false)
+orbit_3 = scatter(y_n[1:end-1],y_n[2:end], ms=2, ma=0.5, mc=:lightblue, xlims=(0,1), legend=false)
 p3 = scatter!(x_map, y_obs_3, mc =:pink, ms=2, ma=0.5, title=L"\phi = c - d(x, x_0)^{-α}")
 
 ### Put 3 plots onto one image 
-big_plot = pl.plot(p1, p2, p3, layout=(1,3), size=(1100,400))
+
+orbits = pl.plot(orbit_1, orbit_2, orbit_3, layout=(1,3), size=(1100,400))
+
+savefig(orbit,"Output_Images/observable_scatter_plots/perturbed_orbit.png")
 savefig(big_plot,"Output_Images/observable_scatter_plots/3_observables_10^-6_perturbation.png")
 
 ### Fitting a GEV
