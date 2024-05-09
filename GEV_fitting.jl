@@ -3,10 +3,10 @@ This file outputs simulations + fits GEV according to methods in "chaotic_system
 """
 
 include("chaotic_system_methods.jl")
-Date = "_07-05-24_10^-6"
+Date = "_09-05-24_10^-6"
 Random.seed!(1234)
 #Define Constants
-a = 3
+a = 2
 alpha = 1/6
 x0 = 1/3
 c = 1
@@ -18,8 +18,10 @@ y_map = chaotic_map(a, interations)
 x_map = range(0, 1, length=length(y_map))
 pl.plot(x_map, y_map)
 
+
 ### T^n(x)
-y_n = T_mod_map_noisey(a, interations, pertubation)
+y_n = T_mod_map(a, interations, pertubation)
+y_n3 = T_mod_map_noisey(a, interations, pertubation)
 
 ### Perturbed Chaotic Map 3x mod 1 with our 3 observables
 y_obs_1 = observable_one(T_mod_map_noisey(a, interations, pertubation), x0 , alpha)
@@ -28,7 +30,7 @@ y_obs_3 = observable_three(T_mod_map_noisey(a, interations, pertubation), x0 , c
 
 ### We plot the scatter plots onto T(x)
 #Observable 1
- 
+
 orbit = scatter(y_n[1:end-1],y_n[2:end], ms=2, ma=0.5, mc=:lightblue,  xlims=(0,1), legend=false)
 p1 = scatter!(x_map, y_obs_1, mc =:pink, ms=2, ma=0.5, title=L"\phi = d(x, x_0)^{-α}")
 
@@ -64,3 +66,6 @@ d3 = diagnosticplots(fit_obs3)
 draw(PDF("Output_Images/gev_diagnostic_tests/obs1"*Date*".pdf", 25cm, 15cm), d1)
 draw(PDF("Output_Images/gev_diagnostic_tests/obs2"*Date*".pdf",25cm, 15cm), d2)
 draw(PDF("Output_Images/gev_diagnostic_tests/obs3"*Date*".pdf", 25cm, 15cm), d3)
+
+x = [1,23,4,5919,4]
+k_blocks(x, 3)
