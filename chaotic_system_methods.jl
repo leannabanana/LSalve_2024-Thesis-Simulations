@@ -76,8 +76,20 @@ function k_blocks(data, k)
     blocks
 end
 
+### GEV fitting, this takes the maximum values given k blocks
 function maximum_values(data, k)
     blocks = k_blocks(data, k)
     maxima = [maximum(block) for block in blocks]
     return maxima
+end
+
+### This function returns the shape parameter depending on how many blocks we have
+function verify_blocks(data)
+    shape_params = Float64[]
+    for n in 9:150
+        shapes = shape(gevfit(maximum_values(data, n)))
+        append!(shape_params, shapes)
+    end 
+
+    return shape_params
 end

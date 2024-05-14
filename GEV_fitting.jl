@@ -3,7 +3,7 @@ This file outputs simulations + fits GEV according to methods in "chaotic_system
 """
 
 include("chaotic_system_methods.jl")
-Date = "_11-05-24_"
+Date = "_14-05-24_"
 Random.seed!(1234)
 #Define Constants
 
@@ -11,7 +11,7 @@ a = 3
 alpha = 1/6
 x0 = 1/3
 c = 1
-interations = 10^4
+interations = 1000
 pertubation = 1/(10^3)
 initial_value = 0.01
 
@@ -31,7 +31,7 @@ y_obs_3 = observable_three(T_mod_map_noisey(a,  initial_value, interations, pert
 
 ### Plit into k_blocks and find its maximum_values
 
-k = 1000
+k = 100
 maximums_1 = maximum_values(y_obs_1, k)
 maximums_2 = maximum_values(y_obs_2, k)
 maximums_3 = maximum_values(y_obs_3, k)
@@ -57,19 +57,18 @@ savefig(orbits,"Output_Images/observable_scatter_plots/perturbed_observables.png
 
 ### Fitting a GEV
 #Observable 1
-fit_obs1 = gevfit(y_obs_1)
+fit_obs1 = gevfit(maximums_1)
 d1 = diagnosticplots(fit_obs1)
 
 #Observable 2
-fit_obs2 = gevfit(y_obs_2)
+fit_obs2 = gevfit(maximums_2)
 d2 = diagnosticplots(fit_obs2)
 
 #Observable 3
-fit_obs3 =gevfit(y_obs_3)
+fit_obs3 =gevfit(maximums_3)
 d3 = diagnosticplots(fit_obs3)
 
 #Save Diagnostic Tests
 draw(PDF("Output_Images/gev_diagnostic_tests/obs1"*Date*".pdf", 25cm, 15cm), d1)
 draw(PDF("Output_Images/gev_diagnostic_tests/obs2"*Date*".pdf",25cm, 15cm), d2)
 draw(PDF("Output_Images/gev_diagnostic_tests/obs3"*Date*".pdf", 25cm, 15cm), d3)
-
