@@ -86,7 +86,7 @@ end
 ### This function returns the shape parameter depending on how many blocks we have
 function verify_blocks(data)
     shape_params = Float64[]
-    for n in 9:150
+    for n in 9:200
         shapes = shape(gevfit(maximum_values(data, n)))
         append!(shape_params, shapes)
     end 

@@ -5,7 +5,7 @@ This file verifies our number of blocks
 include("GEV_fitting.jl")
 include("chaotic_system_methods.jl")
 
-k = collect(9:150) 
+k = collect(9:200) 
 
 shapes_1 = verify_blocks(y_obs_1)
 xi_1 = pl.plot(k, shapes_1, legend=false, ylabel=L"ξ",  xlabel="Number of k blocks", title=L"\phi = d(x, x_0)^{-α}")

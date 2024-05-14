@@ -31,23 +31,22 @@ y_obs_3 = observable_three(T_mod_map_noisey(a,  initial_value, interations, pert
 
 ### Plit into k_blocks and find its maximum_values
 
-k = 100
-maximums_1 = maximum_values(y_obs_1, k)
-maximums_2 = maximum_values(y_obs_2, k)
-maximums_3 = maximum_values(y_obs_3, k)
+maximums_1 = maximum_values(y_obs_1, 50)
+maximums_2 = maximum_values(y_obs_2, 55)
+maximums_3 = maximum_values(y_obs_3, 100)
 
 ### We plot the scatter plots onto T(x)
 #Observable 1
 orbit_1 = scatter(y_n3[1:end-1],y_n3[2:end], ms=2, ma=0.5, mc=:lightblue,  xlims=(0,1), legend=false)
-p1 = scatter!(x_map, maximums_1, mc =:pink, ms=2, ma=0.5, title=L"\phi = d(x, x_0)^{-α}")
+p1 = scatter!(x_map, y_obs_1, mc =:pink, ms=2, ma=0.5, title=L"\phi = d(x, x_0)^{-α}")
 
 #Observable 2
 orbit_2 = scatter(y_n3[1:end-1],y_n3[2:end], ms=2, ma=0.5, mc=:lightblue, xlims=(0,1), legend=false)
-p2 = scatter!(x_map, maximums_2, mc =:pink, ms=2, ma=0.5, title=L"\phi = -log(d(x, x_0))")
+p2 = scatter!(x_map, y_obs_2, mc =:pink, ms=2, ma=0.5, title=L"\phi = -log(d(x, x_0))")
 
 #Observable 3
 orbit_3 = scatter(y_n3[1:end-1],y_n3[2:end], ms=2, ma=0.5, mc=:lightblue, xlims=(0,1), legend=false)
-p3 = scatter!(x_map, maximums_3, mc =:pink, ms=2, ma=0.5, title=L"\phi = c - d(x, x_0)^{-α}")
+p3 = scatter!(x_map, y_obs_3, mc =:pink, ms=2, ma=0.5, title=L"\phi = c - d(x, x_0)^{-α}")
 
 ### Put 3 plots onto one image 
 
@@ -65,7 +64,7 @@ fit_obs2 = gevfit(maximums_2)
 d2 = diagnosticplots(fit_obs2)
 
 #Observable 3
-fit_obs3 =gevfit(maximums_3)
+fit_obs3 = gevfit(maximums_3)
 d3 = diagnosticplots(fit_obs3)
 
 #Save Diagnostic Tests
