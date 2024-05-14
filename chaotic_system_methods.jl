@@ -1,10 +1,9 @@
 """
 This file initialises methods required to simulate chaotic systems
 """
-
 ## Plots and Gadly are both plotting packages a plot command
 import Plots as pl #The Extremes package uses Gadfly as its plotting package this distinguishes packaes
-using Plots, Extremes, Distributions, Gadfly, LaTeXStrings, Cairo, Fontconfig, Random
+using Plots, Extremes, Distributions, Gadfly, LaTeXStrings, Cairo, Fontconfig, Random, DataFrames, CSV
 
 set_default_plot_size(25cm, 20cm) ### Choosing a default plot size
 
@@ -86,7 +85,7 @@ end
 ### This function returns the shape parameter depending on how many blocks we have
 function verify_blocks(data)
     shape_params = Float64[]
-    for n in 9:200
+    for n in 9:150
         shapes = shape(gevfit(maximum_values(data, n)))
         append!(shape_params, shapes)
     end 
