@@ -83,9 +83,9 @@ function maximum_values(data, k)
 end
 
 ### This function returns the shape parameter depending on how many blocks we have
-function verify_blocks(data)
+function verify_blocks(data, block_number)
     shape_params = Float64[]
-    for n in 9:150
+    for n in block_number
         shapes = shape(gevfit(maximum_values(data, n)))
         append!(shape_params, shapes)
     end 
@@ -96,3 +96,13 @@ end
 moving_average(data, window_size) = [sum(@view data[i:(i+window_size-1)])/window_size for i in 1:(length(data)-(window_size-1))]
 
 moving_minimum(data, window_size) = [minimum(@view data[i:(i+window_size-1)]) for i in 1:(length(data)-(window_size-1))]
+
+function simulate_orbits(num_orbits, a, start, n, perturbation)
+    all_orbits = Vector{Vector{Float64}}(undef, num_orbits)
+
+    for i in 1:num_orbits
+        all_orbits[i] = T_mod_map_noisey(a, start, n, perturbation)
+    end
+
+    return all_orbits
+end
