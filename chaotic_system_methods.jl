@@ -92,3 +92,7 @@ function verify_blocks(data)
 
     return shape_params
 end
+
+moving_average(data, window_size) = [sum(@view data[i:(i+window_size-1)])/window_size for i in 1:(length(data)-(window_size-1))]
+
+moving_minimum(data, window_size) = [minimum(@view data[i:(i+window_size-1)]) for i in 1:(length(data)-(window_size-1))]

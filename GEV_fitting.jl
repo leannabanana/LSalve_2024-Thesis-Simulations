@@ -3,15 +3,16 @@ This file outputs simulations + fits GEV according to methods in "chaotic_system
 """
 
 include("chaotic_system_methods.jl")
-Date = "_15-05-24_"
+Date = "_16-05-24_"
 Random.seed!(1234)
+
 
 #Define Constants
 a = 3
 alpha = 1/6
 x0 = 1/3
 c = 2
-interations = 1000
+interations = 10^3
 pertubation = 1/(10^3)
 initial_value = 0.01
 
