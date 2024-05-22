@@ -83,7 +83,7 @@ function maximum_values(data, k)
 end
 
 ### This function returns the shape parameter depending on how many blocks we have
-function verify_blocks(data, block_number)
+function xi_params(data, block_number)
     shape_params = Float64[]
     for n in block_number
         shapes = shape(gevfit(maximum_values(data, n)))
