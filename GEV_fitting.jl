@@ -48,9 +48,9 @@ orbit_3 = scatter(y_n_noise[1:end-1],y_n_noise[2:end], ms=2, ma=0.5, mc=:lightbl
 p3 = scatter!(x_map, y_obs_3, mc =:pink, ms=2, ma=0.5, title=L"\phi = c - d(x, x_0)^{-α}")
 
 ### Put 3 plots onto one image 
-orbits = pl.plot(orbit_1, orbit_2, orbit_3, layout=(1,3), size=(1100,500))
+orbiting = pl.plot(orbit_1, orbit_2, orbit_3, layout=(1,3), size=(1100,500))
 
-savefig(orbits,"Output_Images/observable_scatter_plots/perturbed_observables.png")
+savefig(orbiting,"Output_Images/observable_scatter_plots/perturbed_observables.png")
 
 ### Fitting a GEV
 #Observable 1
@@ -70,4 +70,6 @@ draw(PNG("Output_Images/gev_diagnostic_tests/obs1"*Date*".png", 25cm, 15cm), d1)
 draw(PNG("Output_Images/gev_diagnostic_tests/obs2"*Date*".png",25cm, 15cm), d2)
 draw(PNG("Output_Images/gev_diagnostic_tests/obs3"*Date*".png", 25cm, 15cm), d3)
 
-
+params(fit_obs1)
+scale(fit_obs1)
+location(fit_obs1)
