@@ -3,7 +3,7 @@ This file outputs simulations + fits GEV according to methods in "chaotic_system
 """
 
 include("chaotic_system_methods.jl")
-Date = "_21-05-24_"
+Date = "_19-06-24_"
 Random.seed!(1234)
 
 
@@ -56,7 +56,6 @@ savefig(orbiting,"Output_Images/observable_scatter_plots/perturbed_observables.p
 #Observable 1
 fit_obs1 = gevfit(maximums_1)
 d1 = diagnosticplots(fit_obs1)
-
 #Observable 2
 fit_obs2 = gevfit(maximums_2)
 d2 = diagnosticplots(fit_obs2)
@@ -66,10 +65,7 @@ fit_obs3 = gevfit(maximums_3)
 d3 = diagnosticplots(fit_obs3)
 
 #Save Diagnostic Tests
-draw(PNG("Output_Images/gev_diagnostic_tests/obs1"*Date*".png", 25cm, 15cm), d1)
-draw(PNG("Output_Images/gev_diagnostic_tests/obs2"*Date*".png",25cm, 15cm), d2)
-draw(PNG("Output_Images/gev_diagnostic_tests/obs3"*Date*".png", 25cm, 15cm), d3)
+#draw(PNG("Output_Images/gev_diagnostic_tests/obs1"*Date*".png", 25cm, 15cm), d1)
+#draw(PNG("Output_Images/gev_diagnostic_tests/obs2"*Date*".png",25cm, 15cm), d2)
+#draw(PNG("Output_Images/gev_diagnostic_tests/obs3"*Date*".png", 25cm, 15cm), d3)
 
-params(fit_obs1)
-scale(fit_obs1)
-location(fit_obs1)

@@ -1,0 +1,8 @@
+Instructions and progression of simulation: 
+
+1. Simulated chaotic system 3xmod1. Can be changed to anything.
+2. Fitted GEV. It was bad
+3. Added noise, fixed everything. 
+4. Verified block sizes by plotting \xi against block length
+5. Applied functionals
+6. Graph blocks against parameters. 
