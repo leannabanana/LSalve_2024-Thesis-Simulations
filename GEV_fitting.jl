@@ -65,7 +65,7 @@ fit_obs3 = gevfit(maximums_3)
 d3 = diagnosticplots(fit_obs3)
 
 #Save Diagnostic Tests
-draw(PDF("Output_Images/gev_diagnostic_tests/frechet"*Date*".pdf", 25cm, 15cm), d1)
-draw(PDF("Output_Images/gev_diagnostic_tests/gumbell"*Date*".pdf",25cm, 15cm), d2)
-draw(PDF("Output_Images/gev_diagnostic_tests/weibull"*Date*".pdf", 25cm, 15cm), d3)
+#draw(PDF("Output_Images/gev_diagnostic_tests/frechet"*Date*".pdf", 25cm, 15cm), d1)
+#draw(PDF("Output_Images/gev_diagnostic_tests/gumbell"*Date*".pdf",25cm, 15cm), d2)
+#draw(PDF("Output_Images/gev_diagnostic_tests/weibull"*Date*".pdf", 25cm, 15cm), d3)
 
