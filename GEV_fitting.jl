@@ -3,7 +3,7 @@ This file outputs simulations + fits GEV according to methods in "chaotic_system
 """
 
 include("chaotic_system_methods.jl")
-Date = "_19-06-24_"
+Date = "_22-06-24_"
 Random.seed!(1234)
 
 
@@ -50,7 +50,7 @@ p3 = scatter!(x_map, y_obs_3, mc =:pink, ms=2, ma=0.5, title=L"\phi = c - d(x, x
 ### Put 3 plots onto one image 
 orbiting = pl.plot(orbit_1, orbit_2, orbit_3, layout=(1,3), size=(1100,500))
 
-savefig(orbiting,"Output_Images/observable_scatter_plots/perturbed_observables.png")
+#savefig(orbiting,"Output_Images/observable_scatter_plots/perturbed_observables.pdf")
 
 ### Fitting a GEV
 #Observable 1
@@ -65,7 +65,7 @@ fit_obs3 = gevfit(maximums_3)
 d3 = diagnosticplots(fit_obs3)
 
 #Save Diagnostic Tests
-#draw(PNG("Output_Images/gev_diagnostic_tests/obs1"*Date*".png", 25cm, 15cm), d1)
-#draw(PNG("Output_Images/gev_diagnostic_tests/obs2"*Date*".png",25cm, 15cm), d2)
-#draw(PNG("Output_Images/gev_diagnostic_tests/obs3"*Date*".png", 25cm, 15cm), d3)
+draw(PDF("Output_Images/gev_diagnostic_tests/frechet"*Date*".pdf", 25cm, 15cm), d1)
+draw(PDF("Output_Images/gev_diagnostic_tests/gumbell"*Date*".pdf",25cm, 15cm), d2)
+draw(PDF("Output_Images/gev_diagnostic_tests/weibull"*Date*".pdf", 25cm, 15cm), d3)
 

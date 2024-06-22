@@ -10,16 +10,16 @@ k_block_number = collect(9:100)
 
 ### Verify Normal GEV fits
 shapes_1 = xi_params(y_obs_1, k_block_number)
-xi_1 = pl.plot(k_block_number, shapes_1, legend=false, title=L"\phi = d(x, x_0)^{-α}")
+xi_1 = pl.plot(k_block_number, shapes_1, legend=false, title=L"\phi = d(x, x_0)^{-α}",margin=5mm)
 
 shapes_2 = xi_params(y_obs_2, k_block_number)
-xi_2 = pl.plot(k_block_number, shapes_2, legend=false, title=L"\phi = -log(d(x, x_0))")
+xi_2 = pl.plot(k_block_number, shapes_2, legend=false, title=L"\phi = -log(d(x, x_0))", margin=5mm)
 
 shapes_3 = xi_params(y_obs_3, k_block_number)
-xi_3 = pl.plot(k_block_number, shapes_3, legend=false, title=L"\phi = c - d(x, x_0)^{-α}")
+xi_3 = pl.plot(k_block_number, shapes_3, legend=false, title=L"\phi = c - d(x, x_0)^{-α}", margin=5mm)
 
-k_plots = pl.plot(xi_1, xi_2, xi_3, layout=(1,3), ylabel=L"ξ",  xlabel="Number of k blocks", size=(1300,500))
-savefig(k_plots,"Output_Images/gev_diagnostic_tests/blocks_vs_xi.png")
+k_plots = pl.plot(xi_1, xi_2, xi_3, layout=(1,3), ylabel=L"ξ",  xlabel="k", size=(1200,500))
+savefig(k_plots,"Output_Images/gev_diagnostic_tests/blocks_vs_xi.pdf")
 
 
 ### Verify Functionals

@@ -52,11 +52,10 @@ function params_obs_1(orbits, window_sizes)
 end
 
 param_block_1 = params_obs_1(orbits, window_sizes)
-param_block_1[3]
 xis = pl.plot(window_sizes, param_block_1[1], title=L"ξ", legend=false)
 mus = pl.plot(window_sizes, param_block_1[2], title=L"μ", legend=false)
 theta = pl.plot(window_sizes, param_block_1[3], title=L"θ", legend=false)
-min_params_1 = pl.plot(xis, mus, theta, size=(1000, 500), layout=(1,3), plot_title="Moving Average Parameters vs Window Size (Observable 1)")
+min_params_1 = pl.plot(xis, mus, theta, size=(1000, 500), layout=(1,3), plot_title="Moving Minimum Parameters vs Window Size (Frechet)")
 
 
 # Observable 2
@@ -103,10 +102,10 @@ parm_block_2 = params_obs_2(orbits, window_sizes)
 xis_2 = pl.plot(window_sizes, parm_block_2[1], title=L"ξ", legend=false)
 mus_2 = pl.plot(window_sizes, parm_block_2[2], title=L"μ", legend=false)
 theta_2 = pl.plot(window_sizes, param_block_1[3], title=L"θ", legend=false)
-min_params_2 = pl.plot(xis_2, mus_2, theta_2, size=(1000, 500), layout=(1,3), plot_title="Moving Minimum Parameters vs Window Size (Observable 2)")
+min_params_2 = pl.plot(xis_2, mus_2, theta_2, size=(1000, 500), layout=(1,3), plot_title="Moving Minimum Parameters vs Window Size (Gumbell)")
 
-savefig(min_params_1,"Output_Images/parameters_vs_window_size/Moving_min_obs1.png")
-savefig(min_params_2,"Output_Images/parameters_vs_window_size/Moving_min_obs2.png")
+savefig(min_params_1,"Output_Images/parameters_vs_window_size/Moving_min_frechet.pdf")
+savefig(min_params_2,"Output_Images/parameters_vs_window_size/Moving_min_gumbell.pdf")
 
 ### Moving Average
 # Observable 1
@@ -133,7 +132,7 @@ param_block_av_1 = params_obs_1_av(orbits, window_sizes)
 xis_av_1 = pl.plot(window_sizes, param_block_av_1[1], title=L"ξ", legend=false)
 mus_av_1 = pl.plot(window_sizes, param_block_av_1[2], title=L"μ", legend=false)
 theta_av_1 = pl.plot(window_sizes, param_block_av_1[3], title=L"θ", legend=false)
-av_params_1 = pl.plot(xis_av_1, mus_av_1, theta_av_1, size=(1000, 500), layout=(1,3), plot_title="Moving Average Parameters vs Window Size (Observable 1)")
+av_params_1 = pl.plot(xis_av_1, mus_av_1, theta_av_1, size=(1000, 500), layout=(1,3), plot_title="Moving Average Parameters vs Window Size (Frechet)")
 
 #Observable 2
 function params_obs_2_av(orbits, window_size)
@@ -160,13 +159,11 @@ end
 param_block_av_2 = params_obs_2_av(orbits, window_sizes)
 
 xis_av_2 = pl.plot(window_sizes, param_block_av_2[1], title=L"ξ", legend=false)
-annotate!(0, 0.5, text("Y Axis Title", rotation=90, halign=:center, valign=:center))
 mus_av_2 = pl.plot(window_sizes, param_block_av_2[2], title=L"μ", legend=false)
-
 theta_av_2 = pl.plot(window_sizes, param_block_av_2[3], title=L"θ", legend=false)
-av_params_2 = pl.plot(xis_av_2, mus_av_2, theta_av_2, size=(1000, 500), layout=(1,3),  plot_title="Moving Average Parameters vs Window Sie (Observable 2)")
+av_params_2 = pl.plot(xis_av_2, mus_av_2, theta_av_2, size=(1000, 500), layout=(1,3),  plot_title="Moving Average Parameters vs Window Size (Gumbell)")
 
 
-savefig(av_params_1,"Output_Images/parameters_vs_window_size/Moving_Average_obs1.png")
-savefig(av_params_2,"Output_Images/parameters_vs_window_size/Moving_Average_obs2.png")
+savefig(av_params_1,"Output_Images/parameters_vs_window_size/Moving_Average_frechet.pdf")
+savefig(av_params_2,"Output_Images/parameters_vs_window_size/Moving_Average_gumbell.pdf")
 
