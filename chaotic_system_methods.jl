@@ -3,7 +3,7 @@ This file initialises methods required to simulate chaotic systems
 """
 ## Plots and Gadly are both plotting packages a plot command
 import Plots as pl #The Extremes package uses Gadfly as its plotting package this distinguishes packaes
-using Plots, Extremes, Distributions, Gadfly, LaTeXStrings, Fontconfig, Random, DataFrames, CSV, Cairo
+using Plots, Extremes, Distributions, Gadfly, LaTeXStrings, Fontconfig, Random, DataFrames, CSV
 
 set_default_plot_size(25cm, 20cm) ### Choosing a default plot size
 
@@ -62,6 +62,7 @@ function observable_three(x_values, x0, a, alpha)
     return distances
 end
 
+### This function splits a vector into k even blocks
 function k_blocks(data, k)
     n = length(data)
     q, r = divrem(n, k)  # Calculate the quotient and remainder
