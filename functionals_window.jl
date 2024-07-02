@@ -17,6 +17,8 @@ n_orbits = 10^3
 window_size = 14
 
 
+x0s = rand()
+
 ### Simulate 1000 orbits
 orbits = simulate_orbits(n_orbits, a, initial_value, interations, pertubation)
 
@@ -25,7 +27,7 @@ observable_values = map(orbit -> observable_one(orbit, x0, alpha), orbits) ## Co
 
 #moving minimum functional
 frechet_moving_min = maximum.(moving_minimum.(observable_values, window_size))
-gev_max_av = maximum_values(frechet_moving_av, 50)
+gev_max_av = maximum_values(frechet_moving_min, 50)
 frechet_av = gevfit(gev_max_av)
 
 #moving average functional
@@ -47,10 +49,10 @@ gev_max_av_2 = maximum_values(max_min_av_2, 50)
 gumbel_av = gevfit(gev_max_av_2)
 
 
-d4 = diagnosticplots(frechet_min)
-d5 = diagnosticplots(frechet_av)
-d6 = diagnosticplots(gumbel_min)
-d7 = diagnosticplots(gumbel_av)
+#d4 = diagnosticplots(frechet_moving_min)
+#d5 = diagnosticplots(frechet_moving_av)
+#d6 = diagnosticplots(gumbel_min)
+#d7 = diagnosticplots(gumbel_av)
 
 #Saving Diagnostic tests
 #draw(PDF("Output_Images/gev_diagnostic_tests/frechet_moving_min"*Date*".pdf", 25cm, 15cm), d4)

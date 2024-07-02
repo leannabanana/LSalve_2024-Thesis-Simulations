@@ -10,7 +10,7 @@ Random.seed!(1234)
 #Define Constants
 a = 3
 alpha = 1/6
-x0 = 1/3
+x0 = 0
 c = 2
 interations = 10^3
 pertubation = 1/(10^3)
