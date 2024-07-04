@@ -8,11 +8,8 @@ Random.seed!(1234)
 ### Define the window sizes
 window_sizes = collect(1:15)
 
-### Define Multiple x0s
-initial_conditions = rand(Uniform(0, 1), 10^3)
-
 ### Simulate 1000 orbits
-orbits = simulate_orbits(n_orbits, a, initial_conditions, interations, pertubation)
+orbits = simulate_orbits(n_orbits, a, initial_value, interations, pertubation)
 
 ##### Moving Minimums
 #Observable 1
@@ -24,7 +21,7 @@ function params_min_1(orbits, window_sizes)
     
     for windows in window_sizes
         observable_values = map(orbit -> observable_one(orbit, x0, alpha), orbits) ## Compose all orbits/trajectories by our observable
-        mov_min_1 = moving_minimum.(observable_values, windows)     
+        mov_min_1 = moving_minimum.(observable_values, windows)
         max_min = maximum.(mov_min_1)
         
         shapes = 0.0
@@ -114,10 +111,9 @@ function params_obs_1_av(orbits, window_size)
     shape_params = Float64[]
     location_params = Float64[]
     scale_params = Float64[]
-
     for windows in window_sizes
         observable_values = map(orbit -> observable_one(orbit, x0, alpha), orbits) ## Comopse all orbits/trajectories by our observable
-        mov_min_1 = (moving_average.(observable_values, windows))
+        mov_min_1= (moving_average.(observable_values, windows))
         max_min = maximum.(mov_min_1)
 
         shapes = shape(gevfit(max_min))
@@ -145,7 +141,8 @@ function params_obs_2_av(orbits, window_size)
     for windows in window_sizes
         observable_values = map(orbit -> observable_two(orbit, x0), orbits) ## Comopse all orbits/trajectories by our observable
         mov_min_1= (moving_average.(observable_values, windows))
-        gev_max = maximum.(mov_min_1)
+        max_min = maximum.(mov_min_1)
+        gev_max = maximum_values(max_min, 50)
 
         shapes = shape(gevfit(gev_max))
         location_1 = location(gevfit(gev_max))
@@ -165,5 +162,7 @@ mus_av_2 = pl.plot(window_sizes, param_block_av_2[2], title=L"μ", legend=false)
 theta_av_2 = pl.plot(window_sizes, param_block_av_2[3], title=L"θ", legend=false)
 av_params_2 = pl.plot(xis_av_2, mus_av_2, theta_av_2, size=(1000, 500), layout=(1,3),  plot_title="Moving Average Parameters vs Window Size (Gumbell)")
 
-savefig(av_params_1,"Output_Images/parameters_vs_window_size/Moving_min_frechet.pdf")
-savefig(av_params_2,"Output_Images/parameters_vs_window_size/Moving_min_gumbell.pdf")
+
+savefig(av_params_1,"Output_Images/parameters_vs_window_size/Moving_Average_frechet.pdf")
+savefig(av_params_2,"Output_Images/parameters_vs_window_size/Moving_Average_gumbell.pdf")
+
