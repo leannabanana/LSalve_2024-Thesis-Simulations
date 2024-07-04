@@ -3,7 +3,7 @@ This file initialises methods required to simulate chaotic systems
 """
 ## Plots and Gadly are both plotting packages a plot command
 import Plots as pl #The Extremes package uses Gadfly as its plotting package this distinguishes packaes
-using Plots, Extremes, Distributions, Gadfly, LaTeXStrings, Fontconfig, Random, DataFrames, CSV, Cairo
+using Plots, Extremes, Distributions, Gadfly, LaTeXStrings, Fontconfig, Random, DataFrames, CSV
 
 set_default_plot_size(25cm, 20cm) ### Choosing a default plot size
 
@@ -34,11 +34,11 @@ end
 
 ### Perturbed System
 function T_mod_map_noisey(a, start, n, pertubation)  #gives composition n times with perturbations
-    y_values = Float64[]
+    y_values = [start]
     normal_dist_t = Normal(0, pertubation)
     x = start
 
-    for i in 1:n
+    for i in 1:n-1
         x = (a*x) % 1 + rand(normal_dist_t)
         push!(y_values, x) 
 
@@ -97,12 +97,11 @@ moving_average(data, window_size) = [sum(@view data[i:(i+window_size-1)])/window
 
 moving_minimum(data, window_size) = [minimum(@view data[i:(i+window_size-1)]) for i in 1:(length(data)-(window_size-1))]
 
-function simulate_orbits(num_orbits, a, starts::Vector{Float64}, n, perturbation)
-    all_orbits = Vector{Vector{Float64}}(undef, length(starts))
-
-    for i in 1:length(starts)
-        all_orbits[i] = T_mod_map_noisey(a, starts[i], n, pertubation)
+function simulate_orbits(initial_conditions::Vector{Float64}, a, n, perturbation)
+    num_orbits = length(initial_conditions)
+    all_orbits = Vector{Vector{Float64}}(undef, num_orbits)
+    for i in 1:num_orbits
+        all_orbits[i] = T_mod_map_noisey(a, initial_conditions[i], n, perturbation)
     end
-
     return all_orbits
 end
