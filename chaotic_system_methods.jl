@@ -47,8 +47,8 @@ function T_mod_map_noisey(a, start, n, pertubation)  #gives composition n times 
 end
 
 #Defining observables
-function observable_one(x_values, x0, alpha)
-    distances = abs.(x_values .- x0).^(-alpha)
+function observable_one(x_values, x0, α)
+    distances = abs.(x_values .- x0).^(-α)
     return distances
 end
 
@@ -57,8 +57,8 @@ function observable_two(x_values, x0)
     return distances
 end
 
-function observable_three(x_values, x0, a, alpha)
-    distances = a.- (abs.(x_values .- x0).^(-alpha))
+function observable_three(x_values, x0, a, α)
+    distances = a.- (abs.(x_values .- x0).^(-α))
     return distances
 end
 

@@ -7,7 +7,7 @@ include("GEV_fitting.jl")
 
 #Define Constants
 a = 3
-alpha = 1/6
+α = 1/6
 x0 = 1/3
 c = 2
 interations = 10^3
@@ -21,7 +21,7 @@ window_size = 14
 orbits = simulate_orbits(n_orbits, a, initial_value, interations, pertubation)
 
 ###### Frechet Distribution
-observable_values = map(orbit -> observable_one(orbit, x0, alpha), orbits) ## Comopse all orbits/trajectories by our observable
+observable_values = map(orbit -> observable_one(orbit, x0, α), orbits) ## Comopse all orbits/trajectories by our observable
 
 #moving minimum functional
 frechet_moving_min = maximum.(moving_minimum.(observable_values, window_size))
@@ -59,7 +59,7 @@ gumbel_av = gevfit(gev_max_av_2)
 #draw(PDF("Output_Images/gev_diagnostic_tests/gumbell_moving_av"*Date*".pdf", 25cm, 15cm), d7)
 
 ### Observable 3 CURRENTLY BROKEN!!!!
-#observable_values_3 = map(orbit -> observable_three(orbit, x0, a, alpha), orbits)
+#observable_values_3 = map(orbit -> observable_three(orbit, x0, a, α), orbits)
 #max_min_3 = maximum.(moving_minimum.(observable_values_3, 90))
 #gev_max_3 = maximum_values(max_min_3, 50)
 #gevfit(gev_max_3)

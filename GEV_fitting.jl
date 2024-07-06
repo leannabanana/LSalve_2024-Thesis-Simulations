@@ -9,7 +9,7 @@ Random.seed!(1234)
 
 #Define Constants
 a = 3
-alpha = 1/6
+α = 1/6
 x0 = 1/3
 c = 9
 interations = 10^3
@@ -25,9 +25,9 @@ y_n = T_mod_map(a, initial_value, interations)
 y_n_noise = T_mod_map_noisey(a, initial_value,  interations, pertubation)
 
 ### Perturbed Chaotic Map 3x mod 1 with our 3 observables
-y_obs_1 = observable_one(T_mod_map_noisey(a, initial_value, interations, pertubation), x0 , alpha)
+y_obs_1 = observable_one(T_mod_map_noisey(a, initial_value, interations, pertubation), x0 , α)
 y_obs_2 = observable_two(T_mod_map_noisey(a,  initial_value, interations, pertubation), x0 )
-y_obs_3 = observable_three(T_mod_map_noisey(a,  initial_value, interations, pertubation), x0 , c, alpha)
+y_obs_3 = observable_three(T_mod_map_noisey(a,  initial_value, interations, pertubation), x0 , c, α)
 
 ### Plit into k_blocks and find its maximum_values
 maximums_1 = maximum_values(y_obs_1, 50)

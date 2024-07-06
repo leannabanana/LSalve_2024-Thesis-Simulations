@@ -1,18 +1,22 @@
 
 include("chaotic_system_methods.jl")
-include("GEV_fitting.jl")
-include("functionals_window.jl")
+
 
 Random.seed!(1234)
 
 ### Define the window sizes
 window_sizes = collect(1:15)
 
-### Define multiple initial initial_conditions
+### Define initial_conditions of length n_orbits
 n_orbits = 10^3
 initial_conditions = collect(1/n_orbits : 1/n_orbits : 1)
 
-### Simulate 1000 orbits
+### Define variables and simulate 1000 orbits
+a = 2 
+pertubation = 1/10^3
+c = 2
+α = 1/3
+
 orbits = simulate_orbits(initial_conditions, 2, n_orbits, pertubation)
 
 ##### Moving Minimums
@@ -23,7 +27,7 @@ function params_min_1(orbits, window_sizes)
     scale_params = Float64[]
     
     for windows in window_sizes
-        observable_values = map(orbit -> observable_one(orbit, 0, alpha), orbits) ## Compose all orbits/trajectories by our observable
+        observable_values = map(orbit -> observable_one(orbit, 0, α), orbits) ## Compose all orbits/trajectories by our observable
         mov_min_1 = moving_minimum.(observable_values, windows)
         max_min = maximum.(mov_min_1)
         
@@ -77,7 +81,7 @@ function params_obs_2(orbits, window_sizes)
         scale_1 = 0.0
         
         try
-            fit = gevfit(gev_max)
+            fit = gumbelfit(gev_max)
             shapes = shape(fit)
             location_1 = location(fit)
             scale_1 = scale(fit)
@@ -114,7 +118,7 @@ function params_obs_1_av(orbits, window_size)
     location_params = Float64[]
     scale_params = Float64[]
     for windows in window_sizes
-        observable_values = map(orbit -> observable_one(orbit, 0, alpha), orbits) ## Comopse all orbits/trajectories by our observable
+        observable_values = map(orbit -> observable_one(orbit, 1/3, α), orbits) ## Comopse all orbits/trajectories by our observable
         mov_min_1= (moving_average.(observable_values, windows))
         max_min = maximum.(mov_min_1)
 
@@ -141,14 +145,13 @@ function params_obs_2_av(orbits, window_size)
     scale_params = Float64[]
 
     for windows in window_sizes
-        observable_values = map(orbit -> observable_two(orbit, x0), orbits) ## Comopse all orbits/trajectories by our observable
+        observable_values = map(orbit -> observable_two(orbit, 1/3), orbits) ## Comopse all orbits/trajectories by our observable
         mov_min_1= (moving_average.(observable_values, windows))
         max_min = maximum.(mov_min_1)
-        gev_max = maximum_values(max_min, 50)
 
-        shapes = shape(gevfit(gev_max))
-        location_1 = location(gevfit(gev_max))
-        scale_1 = scale(gevfit(gev_max))
+        shapes = shape(gumbelfit(max_min))
+        location_1 = location(gevfit(max_min))
+        scale_1 = scale(gevfit(max_min))
 
         append!(shape_params, shapes)
         append!(location_params, location_1)
