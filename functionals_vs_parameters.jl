@@ -5,10 +5,11 @@ include("chaotic_system_methods.jl")
 Random.seed!(1234)
 
 ### Define the window sizes
-window_sizes = collect(1:15)
+window_sizes = collect(1:50)
 
-### Define initial_conditions of length n_orbits
-n_orbits = 10^3
+### Define initial_conditions of length n_length
+orbit_length = 4
+n_orbits = 3
 initial_conditions = collect(1/n_orbits : 1/n_orbits : 1)
 
 ### Define variables and simulate 1000 orbits
@@ -17,7 +18,7 @@ pertubation = 1/10^3
 c = 2
 α = 1/3
 
-orbits = simulate_orbits(initial_conditions, 2, n_orbits, pertubation)
+orbits = simulate_orbits(initial_conditions, 2, n_orbits, pertubation, orbit_length)
 
 ##### Moving Minimums
 #Observable 1
@@ -59,7 +60,7 @@ end
 
 param_block_1 = params_min_1(orbits, window_sizes)
 
-xis = pl.plot(window_sizes, param_block_1[1], title=L"ξ", legend=false)
+xis = pl.plot(orbit_length ./ window_sizes, param_block_1[1], title=L"ξ", legend=false)
 mus = pl.plot(window_sizes, param_block_1[2], title=L"μ", legend=false)
 theta = pl.plot(window_sizes, param_block_1[3], title=L"θ", legend=false)
 min_params_1 = pl.plot(xis, mus, theta, size=(1000, 500), layout=(1,3), plot_title="Moving Minimum Parameters vs Window Size (Frechet)")
@@ -103,9 +104,10 @@ function params_obs_2(orbits, window_sizes)
 end
 
 parm_block_2 = params_obs_2(orbits, window_sizes)
-xis_2 = pl.plot(window_sizes, parm_block_2[1], title=L"ξ", legend=false)
-mus_2 = pl.plot(window_sizes, parm_block_2[2], title=L"μ", legend=false)
-theta_2 = pl.plot(window_sizes, parm_block_2[3], title=L"θ", legend=false)
+
+xis_2 = pl.plot(orbit_length ./ window_sizes, parm_block_2[1], title=L"ξ", legend=false)
+mus_2 = pl.plot(orbit_length ./ window_sizes, parm_block_2[2], title=L"μ", legend=false)
+theta_2 = pl.plot(orbit_length ./ window_sizes, parm_block_2[3], title=L"σ", legend=false)
 min_params_2 = pl.plot(xis_2, mus_2, theta_2, size=(1000, 500), layout=(1,3), plot_title="Moving Minimum Parameters vs Window Size (Gumbell)")
 
 savefig(min_params_1,"Output_Images/parameters_vs_window_size/Moving_min_frechet.pdf")
@@ -135,7 +137,7 @@ end
 param_block_av_1 = params_obs_1_av(orbits, window_sizes)
 xis_av_1 = pl.plot(window_sizes, param_block_av_1[1], title=L"ξ", legend=false)
 mus_av_1 = pl.plot(window_sizes, param_block_av_1[2], title=L"μ", legend=false)
-theta_av_1 = pl.plot(window_sizes, param_block_av_1[3], title=L"θ", legend=false)
+theta_av_1 = pl.plot(window_sizes, param_block_av_1[3], title=L"σ", legend=false)
 av_params_1 = pl.plot(xis_av_1, mus_av_1, theta_av_1, size=(1000, 500), layout=(1,3), plot_title="Moving Average Parameters vs Window Size (Frechet)")
 
 #Observable 2
@@ -164,7 +166,7 @@ param_block_av_2 = params_obs_2_av(orbits, window_sizes)
 
 xis_av_2 = pl.plot(window_sizes, param_block_av_2[1], title=L"ξ", legend=false)
 mus_av_2 = pl.plot(window_sizes, param_block_av_2[2], title=L"μ", legend=false)
-theta_av_2 = pl.plot(window_sizes, param_block_av_2[3], title=L"θ", legend=false)
+theta_av_2 = pl.plot(window_sizes, param_block_av_2[3], title=L"σ", legend=false)
 av_params_2 = pl.plot(xis_av_2, mus_av_2, theta_av_2, size=(1000, 500), layout=(1,3),  plot_title="Moving Average Parameters vs Window Size (Gumbell)")
 
 

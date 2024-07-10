@@ -12,7 +12,7 @@ function exponential_distributions(n_vectors, size, distribution)
 end
 
 num_vectors = 10^3
-vector_size = 10^3
+vector_size = 10^4
 λ = 12 #just because i can
 distribution = Exponential(λ)
 

@@ -7,12 +7,11 @@ window_sizes = collect(1:15)
 n_orbits = 10^3
 initial_conditions = collect(1/n_orbits : 1/n_orbits : 1)
 
-
 ### Simulate orbits
 a = 2 
 pertubation = 1/10^3
 p0 = 0
-p1 = 1/(sqrt(2)*pi)
+p1 = 1/(sqrt(2))
 
 orbits = simulate_orbits(initial_conditions, a, n_orbits, pertubation)
 observables = map(orbit -> observable_two(orbit, p1), orbits)
@@ -27,6 +26,7 @@ function extremal_FerroSegers(Y, p)
     # method proposed by Ferro-Segers (Ferro, C. A. T., and
     # J. Segers (2003), Inference for clusters of extremes,
     # J. R. Stat. Soc., Ser. B, 65, 545-556.).
+
     # INPUTS:
     # - Y: a vector containing a univariate time series
     # - p: a quantile value
@@ -46,9 +46,10 @@ function extremal_FerroSegers(Y, p)
     N = length(Ti)
     
     # Use the Ferro-Segers formula to extract theta
-    theta = 2 * (sum(Ti .- 1))^2 / (N * sum((Ti .- 1) .* (Ti .- 2)))
+    theta = 2 * (sum(Ti .- 1))^2 / (N * sum((Ti .- 1) .* (Ti .- 2))) 
     
     return theta
 end
 
-extremal_FerroSegers(gev_max, 0.5)
+extremal_FerroSegers(gev_max, 0.95)
+

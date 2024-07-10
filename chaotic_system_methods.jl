@@ -97,11 +97,10 @@ moving_average(data, window_size) = [sum(@view data[i:(i+window_size-1)])/window
 
 moving_minimum(data, window_size) = [minimum(@view data[i:(i+window_size-1)]) for i in 1:(length(data)-(window_size-1))]
 
-function simulate_orbits(initial_conditions::Vector{Float64}, a, n, perturbation)
-    num_orbits = length(initial_conditions)
+function simulate_orbits(initial_conditions::Vector{Float64}, a, n_length, perturbation, num_orbits)
     all_orbits = Vector{Vector{Float64}}(undef, num_orbits)
     for i in 1:num_orbits
-        all_orbits[i] = T_mod_map_noisey(a, initial_conditions[i], n, perturbation)
+        all_orbits[i] = T_mod_map_noisey(a, initial_conditions[i], n_length, perturbation)
     end
     return all_orbits
 end
