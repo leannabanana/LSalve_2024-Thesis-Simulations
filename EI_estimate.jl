@@ -53,3 +53,5 @@ end
 
 extremal_FerroSegers(gev_max, 0.95)
 
+
+extremal_FerroSegers(gev_max, 0.95)

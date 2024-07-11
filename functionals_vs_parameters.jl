@@ -28,7 +28,7 @@ function params_min_1(orbits, window_sizes)
     scale_params = Float64[]
     
     for windows in window_sizes
-        observable_values = map(orbit -> observable_one(orbit, 0, α), orbits) ## Compose all orbits/trajectories by our observable
+        observable_values = map(orbit -> observable_one(orbit, 0, 1/3), orbits) ## Compose all orbits/trajectories by our observable
         mov_min_1 = moving_minimum.(observable_values, windows)
         max_min = maximum.(mov_min_1)
         
@@ -62,7 +62,7 @@ param_block_1 = params_min_1(orbits, window_sizes)
 
 xis = pl.plot(orbit_length ./ window_sizes, param_block_1[1], title=L"ξ", legend=false)
 mus = pl.plot(window_sizes, param_block_1[2], title=L"μ", legend=false)
-theta = pl.plot(window_sizes, param_block_1[3], title=L"θ", legend=false)
+theta = pl.plot(window_sizes, param_block_1[3], title=L"σ", legend=false)
 min_params_1 = pl.plot(xis, mus, theta, size=(1000, 500), layout=(1,3), plot_title="Moving Minimum Parameters vs Window Size (Frechet)")
 
 
@@ -104,10 +104,9 @@ function params_obs_2(orbits, window_sizes)
 end
 
 parm_block_2 = params_obs_2(orbits, window_sizes)
-
-xis_2 = pl.plot(orbit_length ./ window_sizes, parm_block_2[1], title=L"ξ", legend=false)
-mus_2 = pl.plot(orbit_length ./ window_sizes, parm_block_2[2], title=L"μ", legend=false)
-theta_2 = pl.plot(orbit_length ./ window_sizes, parm_block_2[3], title=L"σ", legend=false)
+xis_2 = pl.plot(window_sizes, parm_block_2[1], title=L"ξ", legend=false)
+mus_2 = pl.plot(window_sizes, parm_block_2[2], title=L"μ", legend=false)
+theta_2 = pl.plot(window_sizes, parm_block_2[3], title=L"θ", legend=false)
 min_params_2 = pl.plot(xis_2, mus_2, theta_2, size=(1000, 500), layout=(1,3), plot_title="Moving Minimum Parameters vs Window Size (Gumbell)")
 
 savefig(min_params_1,"Output_Images/parameters_vs_window_size/Moving_min_frechet.pdf")
@@ -120,7 +119,7 @@ function params_obs_1_av(orbits, window_size)
     location_params = Float64[]
     scale_params = Float64[]
     for windows in window_sizes
-        observable_values = map(orbit -> observable_one(orbit, 1/3, α), orbits) ## Comopse all orbits/trajectories by our observable
+        observable_values = map(orbit -> observable_one(orbit, 0, α), orbits) ## Comopse all orbits/trajectories by our observable
         mov_min_1= (moving_average.(observable_values, windows))
         max_min = maximum.(mov_min_1)
 
@@ -147,7 +146,7 @@ function params_obs_2_av(orbits, window_size)
     scale_params = Float64[]
 
     for windows in window_sizes
-        observable_values = map(orbit -> observable_two(orbit, 1/3), orbits) ## Comopse all orbits/trajectories by our observable
+        observable_values = map(orbit -> observable_two(orbit, 0), orbits) ## Comopse all orbits/trajectories by our observable
         mov_min_1= (moving_average.(observable_values, windows))
         max_min = maximum.(mov_min_1)
 
