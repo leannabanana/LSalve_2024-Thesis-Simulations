@@ -2,7 +2,7 @@
 This file fits a GEV to functionals
 """
 
-include("chaotic_system_methods.jl")
+include("methods/chaotic_system_methods.jl")
 include("GEV_fitting.jl")
 
 #Define Constants

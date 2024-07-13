@@ -3,7 +3,7 @@ This file verifies our number of blocks
 """
 
 include("GEV_fitting.jl")
-include("chaotic_system_methods.jl")
+include("methods/chaotic_system_methods.jl")
 include("functionals_window.jl")
 
 k_block_number = collect(9:100) 

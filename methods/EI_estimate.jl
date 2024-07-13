@@ -1,3 +1,7 @@
+"""
+This file contains the method of the EI Estimate
+"""
+
 include("chaotic_system_methods.jl")
 
 Random.seed!(1234)
@@ -5,6 +9,7 @@ window_sizes = collect(1:15)
 
 ### Define initial_conditions of length n_orbits
 n_orbits = 10^3
+orbit_length = 10^4
 initial_conditions = collect(1/n_orbits : 1/n_orbits : 1)
 
 ### Simulate orbits
@@ -13,7 +18,7 @@ pertubation = 1/10^3
 p0 = 0
 p1 = 1/(sqrt(2))
 
-orbits = simulate_orbits(initial_conditions, a, n_orbits, pertubation)
+orbits = simulate_orbits(initial_conditions, a, orbit_length, pertubation, n_orbits)
 observables = map(orbit -> observable_two(orbit, p1), orbits)
 mov_min_1 = moving_minimum.(observables, 50)
 gev_max = maximum.(mov_min_1)
@@ -50,8 +55,5 @@ function extremal_FerroSegers(Y, p)
     
     return theta
 end
-
-extremal_FerroSegers(gev_max, 0.95)
-
 
 extremal_FerroSegers(gev_max, 0.95)

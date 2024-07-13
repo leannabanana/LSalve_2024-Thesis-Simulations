@@ -2,7 +2,7 @@
 This file outputs simulations + fits GEV according to methods in "chaotic_system_methods.jl"
 """
 
-include("chaotic_system_methods.jl")
+include("methods/chaotic_system_methods.jl")
 Date = "_22-06-24_"
 Random.seed!(1234)
 
