@@ -11,23 +11,6 @@ function exponential_distributions(n_vectors, size, distribution)
     return random_vectors
 end
 
-### maybe this is better lol
-function exponential_distributions_2(num_vectors, vector_size, lambda)
-    distribution = Exponential(lambda)
-    random_vectors = []
-
-    for _ in 1:num_vectors
-        x = 0.0
-        vector = [x]
-        for _ in 1:vector_size-1
-            x += rand(distribution)
-            push!(vector, x)
-        end
-        push!(random_vectors, vector)
-    end
-
-    return random_vectors
-end
 
 
 ### Define window sizes
@@ -35,14 +18,13 @@ window_sizes = 1:50
 num_vectors = 10^3
 vector_size = 10^3
 
-
 distribution = Exponential(5)
-block_length = vector_size ./ window_sizes
+block_length = floor.(num_vectors ./ window_sizes)
 
-X1_n = exponential_distributions_2(10, 10, 2)
 X_n = exponential_distributions(num_vectors, vector_size, distribution)
 
 ### Define a function which gets me parameters for changing window sizes for the moving minimum functional 
+
 function rv_minimum(random_variables, window_sizes)
     shape_params = Float64[]
     location_params = Float64[]
@@ -65,10 +47,10 @@ function rv_minimum(random_variables, window_sizes)
 end
 
 #plots
-iid_case = rv_minimum(X_n, block_length)
+iid_case = rv_minimum(X_n, window_sizes)
 
-mus = pl.plot(window_sizes, iid_case[2], title=L"μ", legend=false, xlabel = "k")
-theta = pl.plot(window_sizes, iid_case[3], title=L"σ", legend=false, xlabel = "k")
+mus = pl.plot(iid_case[2], block_length, title=L"μ", legend=false, xlabel = "k")
+theta = pl.plot(block_length, iid_case[3], title=L"σ", legend=false, xlabel = "k")
 min_params_1 = pl.plot(mus, theta, size=(800, 600), layout=(1,2), plot_title="Simluated RV iid rv vs window size moving minimum")
 
 
@@ -129,4 +111,55 @@ savefig(av_params_min,"Output_Images/verifying_dependent_iid_parameters/muk_vs_m
 savefig(av_params_av,"Output_Images/verifying_dependent_iid_parameters/muk_vs_mu_movingav.pdf")
 savefig(combined,"Output_Images/verifying_dependent_iid_parameters/combined_plots.pdf")
 
+function rv_minimum_test(random_variables_list, window_size)
+    shape_params = Float64[]
+    location_params = Float64[]
+    scale_params = Float64[]
 
+    for random_variables in random_variables_list
+        minimums = moving_minimum.(random_variables, window_size)
+        max_min = maximum.(minimums)
+
+        fit = gumbelfit(max_min)
+        shapes = shape(fit)
+        location_1 = location(fit)
+        scale_1 = scale(fit)
+
+        append!(shape_params, shapes)
+        append!(location_params, location_1)
+        append!(scale_params, scale_1)
+    end
+    return shape_params, location_params, scale_params
+end
+
+
+# Function to calculate Gumbel parameters for increasing subsets of random variables
+function rv_minimum_aaa(random_variables, window_size)
+    shape_params = Float64[]
+    location_params = Float64[]
+    scale_params = Float64[]
+
+    num_vectors = length(random_variables)
+    
+    for i in 1:50+num_vectors
+        subset = vcat(random_variables[1:i]...)
+        minimums = moving_minimum(subset, window_size)
+        max_min = maximum.(minimums)
+
+        fit = gumbelfit(max_min)
+        shapes = shape(fit)
+        location_1 = location(fit)
+        scale_1 = scale(fit)
+
+        append!(shape_params, shapes)
+        append!(location_params, location_1)
+        append!(scale_params, scale_1)
+    end
+    
+    return shape_params, location_params, scale_params
+end
+
+rv_minimum_aaa(X_n, 50)
+
+
+moving_minimum(data, window_size) = [minimum(@view data[i:(i+window_size-1)]) for i in 1:(length(data)-(window_size-1))]
