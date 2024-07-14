@@ -16,7 +16,7 @@ initial_conditions = collect(1/n_orbits : 1/n_orbits : 1)
 a = 2 
 pertubation = 1/10^3
 p0 = 0
-p1 = 1/(sqrt(2))
+p1 = 1/(sqrt(2*pi))
 
 orbits = simulate_orbits(initial_conditions, a, orbit_length, pertubation, n_orbits)
 observables = map(orbit -> observable_two(orbit, p1), orbits)
@@ -57,3 +57,5 @@ function extremal_FerroSegers(Y, p)
 end
 
 extremal_FerroSegers(gev_max, 0.95)
+
+println("x0 = 0 gets us 0.776479812607765 and x0 = 1/sqrt(2) = 1.0181")
