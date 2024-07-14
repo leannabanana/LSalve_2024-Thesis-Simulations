@@ -14,9 +14,9 @@ end
 
 
 ### Define window sizes
-window_sizes = 1:50
-num_vectors = 10^3
-vector_size = 10^3
+window_sizes = 1:3
+num_vectors = 20
+vector_size = 20
 
 distribution = Exponential(5)
 block_length = floor.(num_vectors ./ window_sizes)
@@ -141,7 +141,7 @@ function rv_minimum_aaa(random_variables, window_size)
 
     num_vectors = length(random_variables)
     
-    for i in 1:50+num_vectors
+    for i in 50:num_vectors
         subset = vcat(random_variables[1:i]...)
         minimums = moving_minimum(subset, window_size)
         max_min = maximum.(minimums)
@@ -159,7 +159,6 @@ function rv_minimum_aaa(random_variables, window_size)
     return shape_params, location_params, scale_params
 end
 
-rv_minimum_aaa(X_n, 50)
+rv_minimum_aaa(X_n, 4)
 
-
-moving_minimum(data, window_size) = [minimum(@view data[i:(i+window_size-1)]) for i in 1:(length(data)-(window_size-1))]
+X_n
