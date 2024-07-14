@@ -11,7 +11,7 @@ Random.seed!(1234)
 a = 3
 α = 1/6
 x0 = 1/3
-c = 9
+c = 2
 interations = 10^3
 pertubation = 1/(10^3)
 initial_value = 0.01

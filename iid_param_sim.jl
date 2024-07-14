@@ -11,16 +11,14 @@ function exponential_distributions(n_vectors, size, distribution)
     return random_vectors
 end
 
-
-
 ### Define window sizes
-window_sizes = 1:3
-num_vectors = 20
-vector_size = 20
+window_sizes = collect(1:50)
+num_vectors = 10^3
+vector_size = 10^3
 
 distribution = Exponential(5)
 block_length = floor.(num_vectors ./ window_sizes)
-
+reverse(block_length)
 X_n = exponential_distributions(num_vectors, vector_size, distribution)
 
 ### Define a function which gets me parameters for changing window sizes for the moving minimum functional 
@@ -49,7 +47,7 @@ end
 #plots
 iid_case = rv_minimum(X_n, window_sizes)
 
-mus = pl.plot(iid_case[2], block_length, title=L"μ", legend=false, xlabel = "k")
+mus = pl.plot(block_length, iid_case[2], title=L"μ", legend=false, xlabel = "k")
 theta = pl.plot(block_length, iid_case[3], title=L"σ", legend=false, xlabel = "k")
 min_params_1 = pl.plot(mus, theta, size=(800, 600), layout=(1,2), plot_title="Simluated RV iid rv vs window size moving minimum")
 
@@ -94,7 +92,6 @@ end
 iid_case_av = rv_average(X_n, window_sizes)
 mus_av = pl.plot(window_sizes, iid_case_av[2],legend=false, ylabel=L"μ", xlabel=L"k")
 theta_av = pl.plot(window_sizes, iid_case_av[3], legend=false, ylabel=L"σ", xlabel=L"k")
-
 
 av_params = pl.plot(mus_av, theta_av, size=(800,600), layout=(1,2), plot_title="Simulated RV Moving Average Parameters vs Window Size")
 
@@ -160,5 +157,3 @@ function rv_minimum_aaa(random_variables, window_size)
 end
 
 rv_minimum_aaa(X_n, 4)
-
-X_n

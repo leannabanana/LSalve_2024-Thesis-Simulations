@@ -1,7 +1,6 @@
 include("methods/chaotic_system_methods.jl")
 include("methods/parameter_methods.jl")
 
-
 ### Define a function which gets me parameters for changing window sizes for the moving minimum functional 
 
 Random.seed!(1234)
@@ -42,21 +41,3 @@ function rv_minimum(random_variables, window_size)
     end
     return shape_params, location_params, scale_params
 end
-
-# Example usage
-num_vectors_list = [1, 2, 3, 4]  # Different numbers of vectors to generate, each includes the previous
-vector_size = 10
-window_size = 3
-distribution = Exponential(5)
-
-random_vectors = exponential_distributions_cumulative(num_vectors_list, vector_size, distribution)
-shape_params, location_params, scale_params = rv_minimum(random_vectors, window_size)
-
-
-random_vectors[1]
-random_vectors[2]
-random_vectors[3]
-random_vectors[4]
-println("Shape parameters: ", shape_params)
-println("Location parameters: ", location_params)
-println("Scale parameters: ", scale_params)
