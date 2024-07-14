@@ -23,7 +23,7 @@ block_length = vector_size ./ window_sizes
 X_n = exponential_distributions(num_vectors, vector_size, distribution)
 
 ### Define a function which gets me parameters for changing window sizes for the moving minimum functional 
-function rv_minimum(random_variables, window_sizes)
+function rv_minimum(random_variables, block_length)
     shape_params = Float64[]
     location_params = Float64[]
     scale_params = Float64[]
@@ -45,10 +45,10 @@ function rv_minimum(random_variables, window_sizes)
 end
 
 #plots
-iid_case = rv_minimum(X_n, window_sizes)
+iid_case = rv_minimum(X_n, block_length)
 
-mus = pl.plot(num_vectors./window_sizes, iid_case[2], title=L"μ", legend=false)
-theta = pl.plot(block_length, iid_case[3], title=L"σ", legend=false)
+mus = pl.plot(window_sizes, iid_case[2], title=L"μ", legend=false)
+theta = pl.plot(window_sizes, iid_case[3], title=L"σ", legend=false)
 min_params_1 = pl.plot(mus, theta, size=(800, 600), layout=(1,2), plot_title="Simluated RV iid rv vs window size moving minimum")
 
 
