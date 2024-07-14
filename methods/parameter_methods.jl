@@ -40,7 +40,7 @@ end
 
 
 # Gumbel Observable
-function gumbel_params_min(orbits, window_sizes)
+function gumbel_params_min(orbits, window_sizes, x0)
     shape_params = Float64[]
     location_params = Float64[]
     scale_params = Float64[]
@@ -78,7 +78,7 @@ end
 
 ### Moving Average
 #Frechet Observable
-function frechet_params_av(orbits, window_size, x0, α)
+function frechet_params_av(orbits, window_sizes, x0, α)
     shape_params = Float64[]
     location_params = Float64[]
     scale_params = Float64[]
@@ -99,13 +99,13 @@ end
 
 
 #Gumbel Observable
-function gumbel_params_av(orbits, window_size)
+function gumbel_params_av(orbits, window_size, x0)
     shape_params = Float64[]
     location_params = Float64[]
     scale_params = Float64[]
 
     for windows in window_sizes
-        observable_values = map(orbit -> observable_two(orbit, 0), orbits) ## Comopse all orbits/trajectories by our observable
+        observable_values = map(orbit -> observable_two(orbit, x0), orbits) ## Comopse all orbits/trajectories by our observable
         mov_min_1= (moving_average.(observable_values, windows))
         max_min = maximum.(mov_min_1)
 

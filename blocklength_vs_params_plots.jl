@@ -13,7 +13,7 @@ window_sizes = collect(1:50)
 # Variables
 orbit_length = 10^4
 n_orbits = 10^3
-block_length = orbit_length ./ 50
+block_length = orbit_length ./ window_sizes
 initial_conditions = collect(1/n_orbits : 1/n_orbits : 1)
 x0 = 0
 α = 1/3
@@ -25,7 +25,7 @@ perturbation = 1/10^3
 # Simulate orbits
 orbits = simulate_orbits(initial_conditions, a, orbit_length, perturbation, n_orbits)
 
-param_block_1 = frechet_params_min(orbits, 50, x0, α)
+param_block_1 = frechet_params_min(orbits, window_sizes, x0, α)
 
 xis = pl.plot(block_length, param_block_1[1], title=L"ξ", legend=false)
 mus = pl.plot(block_length, param_block_1[2], title=L"μ", legend=false)
@@ -38,7 +38,6 @@ xis = pl.plot(block_length, param_block_1[1], title=L"ξ", legend=false)
 mus = pl.plot(block_length, param_block_1[2], title=L"μ", legend=false)
 theta = pl.plot(block_length, param_block_1[3], title=L"σ", legend=false)
 min_params_1 = pl.plot(xis, mus, theta, size=(1000, 500), layout=(1,3), plot_title="Moving Minimum Parameters vs Window Size (Frechet)")
-
 
 parm_block_2 = gumbel_params_min(orbits, window_sizes, x0)
 

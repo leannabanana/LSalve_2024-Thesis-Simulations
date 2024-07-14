@@ -11,19 +11,39 @@ function exponential_distributions(n_vectors, size, distribution)
     return random_vectors
 end
 
-### Define window sizes
-window_sizes = collect(1:50)
+### maybe this is better lol
+function exponential_distributions_2(num_vectors, vector_size, lambda)
+    distribution = Exponential(lambda)
+    random_vectors = []
 
+    for _ in 1:num_vectors
+        x = 0.0
+        vector = [x]
+        for _ in 1:vector_size-1
+            x += rand(distribution)
+            push!(vector, x)
+        end
+        push!(random_vectors, vector)
+    end
+
+    return random_vectors
+end
+
+
+### Define window sizes
+window_sizes = 1:50
 num_vectors = 10^3
-vector_size = 10^4
+vector_size = 10^3
+
 
 distribution = Exponential(5)
 block_length = vector_size ./ window_sizes
 
+X1_n = exponential_distributions_2(10, 10, 2)
 X_n = exponential_distributions(num_vectors, vector_size, distribution)
 
 ### Define a function which gets me parameters for changing window sizes for the moving minimum functional 
-function rv_minimum(random_variables, block_length)
+function rv_minimum(random_variables, window_sizes)
     shape_params = Float64[]
     location_params = Float64[]
     scale_params = Float64[]
@@ -47,8 +67,8 @@ end
 #plots
 iid_case = rv_minimum(X_n, block_length)
 
-mus = pl.plot(window_sizes, iid_case[2], title=L"μ", legend=false)
-theta = pl.plot(window_sizes, iid_case[3], title=L"σ", legend=false)
+mus = pl.plot(window_sizes, iid_case[2], title=L"μ", legend=false, xlabel = "k")
+theta = pl.plot(window_sizes, iid_case[3], title=L"σ", legend=false, xlabel = "k")
 min_params_1 = pl.plot(mus, theta, size=(800, 600), layout=(1,2), plot_title="Simluated RV iid rv vs window size moving minimum")
 
 
@@ -108,3 +128,5 @@ savefig(min_params_1,"Output_Images/verifying_dependent_iid_parameters/Moving_mi
 savefig(av_params_min,"Output_Images/verifying_dependent_iid_parameters/muk_vs_mu_movingmin.pdf")
 savefig(av_params_av,"Output_Images/verifying_dependent_iid_parameters/muk_vs_mu_movingav.pdf")
 savefig(combined,"Output_Images/verifying_dependent_iid_parameters/combined_plots.pdf")
+
+
