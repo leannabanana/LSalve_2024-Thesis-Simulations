@@ -15,8 +15,8 @@ end
 ### Define window sizes
 window_sizes = collect(1:50)
 
-num_vectors = 50
-vector_size = 50
+num_vectors = 10^4
+vector_size = 10^3
 
 distribution = Exponential(5)
 block_length = floor.(num_vectors ./ window_sizes)
@@ -118,7 +118,7 @@ function test(random_variables, window_size)
     location_params = Float64[]
     scale_params = Float64[]
     
-    for i in 10^4:length(random_variables)
+    for i in 50:length(random_variables)
         minimums = moving_minimum.(random_variables[1:i], window_size)
         max_min = maximum.(minimums)
 
@@ -133,9 +133,13 @@ function test(random_variables, window_size)
     return location_params, scale_params
 end
 
-fuck = test(X_n, 3)
+fuck = test(X_n, 15)
 
-
+fuck[2]
+fuck[1]
+test_block = collect(50:10^4) ./ 15
+pl.plot(test_block, fuck[2])
+pl.plot(test_block, fuck[1])
 # maximum.(moving_minimum.(X_n[1:2], 2))
 
 
