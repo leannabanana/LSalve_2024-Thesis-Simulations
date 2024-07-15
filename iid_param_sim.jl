@@ -5,20 +5,22 @@ This file simulates iid random variables to check how Gumbel parameters change
 include("methods/chaotic_system_methods.jl")
 
 Random.seed!(1234)
+
 ### Simulate a bunch of RV's 
-function exponential_distributions(n_vectors, size, distribution)
-    random_vectors = [rand(distribution, vector_size) for _ in 1:num_vectors]
+function exponential_distributions(n_vectors, vector_size, distribution)
+    random_vectors = [rand(distribution, vector_size) for _ in 1:n_vectors]
     return random_vectors
 end
 
 ### Define window sizes
 window_sizes = collect(1:50)
-num_vectors = 10^3
-vector_size = 10^3
+
+num_vectors = 50
+vector_size = 50
 
 distribution = Exponential(5)
 block_length = floor.(num_vectors ./ window_sizes)
-reverse(block_length)
+
 X_n = exponential_distributions(num_vectors, vector_size, distribution)
 
 ### Define a function which gets me parameters for changing window sizes for the moving minimum functional 
@@ -108,52 +110,46 @@ savefig(av_params_min,"Output_Images/verifying_dependent_iid_parameters/muk_vs_m
 savefig(av_params_av,"Output_Images/verifying_dependent_iid_parameters/muk_vs_mu_movingav.pdf")
 savefig(combined,"Output_Images/verifying_dependent_iid_parameters/combined_plots.pdf")
 
-function rv_minimum_test(random_variables_list, window_size)
-    shape_params = Float64[]
+test(X_n, 10)
+
+X_n
+
+function test(random_variables, window_size)
     location_params = Float64[]
     scale_params = Float64[]
-
-    for random_variables in random_variables_list
-        minimums = moving_minimum.(random_variables, window_size)
+    
+    for i in 10^4:length(random_variables)
+        minimums = moving_minimum.(random_variables[1:i], window_size)
         max_min = maximum.(minimums)
 
         fit = gumbelfit(max_min)
-        shapes = shape(fit)
         location_1 = location(fit)
         scale_1 = scale(fit)
 
-        append!(shape_params, shapes)
         append!(location_params, location_1)
         append!(scale_params, scale_1)
+    
     end
-    return shape_params, location_params, scale_params
+    return location_params, scale_params
 end
 
+fuck = test(X_n, 3)
 
-# Function to calculate Gumbel parameters for increasing subsets of random variables
-function rv_minimum_aaa(random_variables, window_size)
-    shape_params = Float64[]
-    location_params = Float64[]
-    scale_params = Float64[]
 
-    num_vectors = length(random_variables)
+# maximum.(moving_minimum.(X_n[1:2], 2))
+
+
+
+
+
+# function shitbitch(n_vectors, vector_size, distribution)
+#     X_n = collect(1:n_vectors)
+#     random_variables = Float64[]
+
+#     for x in X_n
+#         new_dist = exponential_distributions(n_vectors, vector_size, distribution)
+#         push!(X_n, new_dist)
     
-    for i in 50:num_vectors
-        subset = vcat(random_variables[1:i]...)
-        minimums = moving_minimum(subset, window_size)
-        max_min = maximum.(minimums)
 
-        fit = gumbelfit(max_min)
-        shapes = shape(fit)
-        location_1 = location(fit)
-        scale_1 = scale(fit)
 
-        append!(shape_params, shapes)
-        append!(location_params, location_1)
-        append!(scale_params, scale_1)
-    end
-    
-    return shape_params, location_params, scale_params
-end
 
-rv_minimum_aaa(X_n, 4)
