@@ -3,7 +3,8 @@ This file initialises methods required to simulate chaotic systems
 """
 ## Plots and Gadly are both plotting packages a plot command
 import Plots as pl #The Extremes package uses Gadfly as its plotting package this distinguishes packaes
-using Plots, Extremes, Distributions, Gadfly, LaTeXStrings, Fontconfig, Random, DataFrames, CSV, Statistics
+using Plots, Extremes, Distributions, Gadfly, LaTeXStrings, Fontconfig, Random, DataFrames, CSV, Statistics, BenchmarkTools
+using DataStructures, Base.Threads
 
 set_default_plot_size(25cm, 20cm) ### Choosing a default plot size
 
@@ -104,3 +105,4 @@ function simulate_orbits(initial_conditions::Vector{Float64}, a, n_length, pertu
     end
     return all_orbits
 end
+

@@ -15,7 +15,7 @@ end
 ### Define window sizes
 window_sizes = collect(1:50)
 
-num_vectors = 10^4
+num_vectors = 10^3
 vector_size = 10^3
 
 distribution = Exponential(5)
@@ -23,10 +23,13 @@ block_length = floor.(num_vectors ./ window_sizes)
 
 X_n = exponential_distributions(num_vectors, vector_size, distribution)
 
+@btime moving_minimum.(X_n, 15);
+
+     
 ### Define a function which gets me parameters for changing window sizes for the moving minimum functional 
 
 function rv_minimum(random_variables, window_sizes)
-    shape_params = Float64[]
+    #shape_params = Float64[]
     location_params = Float64[]
     scale_params = Float64[]
     
@@ -35,15 +38,15 @@ function rv_minimum(random_variables, window_sizes)
         max_min = maximum.(minimums)
 
         fit = gumbelfit(max_min)
-        shapes = shape(fit)
+        #shapes = shape(fit)
         location_1 = location(fit)
         scale_1 = scale(fit)
 
-        append!(shape_params, shapes)
+       # append!(shape_params, shapes)
         append!(location_params, location_1)
         append!(scale_params, scale_1)
     end
-    return shape_params, location_params, scale_params
+    return  location_params, scale_params
 end
 
 #plots
@@ -92,6 +95,7 @@ end
 
 #More plots
 iid_case_av = rv_average(X_n, window_sizes)
+
 mus_av = pl.plot(window_sizes, iid_case_av[2],legend=false, ylabel=L"μ", xlabel=L"k")
 theta_av = pl.plot(window_sizes, iid_case_av[3], legend=false, ylabel=L"σ", xlabel=L"k")
 
@@ -115,10 +119,41 @@ test(X_n, 10)
 X_n
 
 function test(random_variables, window_size)
+    # location_params = Vector{Float64}(undef, 998)
+    # scale_params = Vector{Float64}(undef, 998)
+
     location_params = Float64[]
     scale_params = Float64[]
+
+    Threads.@threads for i in 2:length(random_variables)
+        minimums = @. moving_minimum(random_variables[1:i], window_size)
+        max_min = @. maximum(minimums)
+
+        fit = gumbelfit(max_min)
+        location_1 = location(fit)
+        scale_1 = scale(fit)
+
+        append!(location_params, location_1)
+        append!(scale_params, scale_1)
     
-    for i in 50:length(random_variables)
+    end
+    return location_params, scale_params
+end
+
+aaa = collect(2:length(X_n))
+testing = test(X_n, 10)
+block_length_1 = 
+pl.plot(aaa, testing[1])
+pl.plot(aaa, testing[2])
+
+function test_2(random_variables, window_size)
+    # location_params = Vector{Float64}(undef, 100)
+    # scale_params = Vector{Float64}(undef, 100)
+
+    location_params = Float64[]
+    scale_params = Float64[]
+
+    Threads.@threads for i in 2:length(random_variables)
         minimums = moving_minimum.(random_variables[1:i], window_size)
         max_min = maximum.(minimums)
 
@@ -132,28 +167,4 @@ function test(random_variables, window_size)
     end
     return location_params, scale_params
 end
-
-fuck = test(X_n, 15)
-
-fuck[2]
-fuck[1]
-test_block = collect(50:10^4) ./ 15
-pl.plot(test_block, fuck[2])
-pl.plot(test_block, fuck[1])
-# maximum.(moving_minimum.(X_n[1:2], 2))
-
-
-
-
-
-# function shitbitch(n_vectors, vector_size, distribution)
-#     X_n = collect(1:n_vectors)
-#     random_variables = Float64[]
-
-#     for x in X_n
-#         new_dist = exponential_distributions(n_vectors, vector_size, distribution)
-#         push!(X_n, new_dist)
-    
-
-
 
