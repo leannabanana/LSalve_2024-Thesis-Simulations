@@ -1,3 +1,7 @@
+"""
+This file contains methods which given orbits, window sizes and constants returns respective GEV paramters
+"""
+
 include("chaotic_system_methods.jl")
 
 ##### Moving Minimums
@@ -78,7 +82,7 @@ end
 
 ### Moving Average
 #Frechet Observable
-function frechet_params_av(orbits, window_sizes, x0, α)
+function frechet_params_av(orbits, window_size, x0, α)
     shape_params = Float64[]
     location_params = Float64[]
     scale_params = Float64[]

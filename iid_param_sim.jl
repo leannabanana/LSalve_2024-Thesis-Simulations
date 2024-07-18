@@ -13,18 +13,13 @@ function exponential_distributions(n_vectors, vector_size, distribution)
 end
 
 ### Define window sizes
-window_sizes = collect(1:50)
-
+window_size = 10
 num_vectors = 10^3
-vector_size = 10^3
+vector_size = 10^5
 
 distribution = Exponential(5)
-block_length = floor.(num_vectors ./ window_sizes)
 
 X_n = exponential_distributions(num_vectors, vector_size, distribution)
-
-@btime moving_minimum.(X_n, 15);
-
      
 ### Define a function which gets me parameters for changing window sizes for the moving minimum functional 
 
@@ -55,7 +50,6 @@ iid_case = rv_minimum(X_n, window_sizes)
 mus = pl.plot(block_length, iid_case[2], title=L"μ", legend=false, xlabel = "k")
 theta = pl.plot(block_length, iid_case[3], title=L"σ", legend=false, xlabel = "k")
 min_params_1 = pl.plot(mus, theta, size=(800, 600), layout=(1,2), plot_title="Simluated RV iid rv vs window size moving minimum")
-
 
 ### Define a function which gets me parameters for changing window sizes for the moving average functional
 function rv_average(random_variables, window_sizes)
@@ -116,11 +110,9 @@ savefig(combined,"Output_Images/verifying_dependent_iid_parameters/combined_plot
 
 test(X_n, 10)
 
-X_n
-
 function test(random_variables, window_size)
-    # location_params = Vector{Float64}(undef, 998)
-    # scale_params = Vector{Float64}(undef, 998)
+    # location_params = Vector{Float64}(undef, 99999)
+    # scale_params = Vector{Float64}(undef, 99999)
 
     location_params = Float64[]
     scale_params = Float64[]
@@ -140,11 +132,12 @@ function test(random_variables, window_size)
     return location_params, scale_params
 end
 
-aaa = collect(2:length(X_n))
+aaa = collect(2:vector_size)
 testing = test(X_n, 10)
-block_length_1 = 
+
 pl.plot(aaa, testing[1])
 pl.plot(aaa, testing[2])
+
 
 function test_2(random_variables, window_size)
     # location_params = Vector{Float64}(undef, 100)

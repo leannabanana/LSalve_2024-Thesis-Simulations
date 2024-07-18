@@ -58,4 +58,11 @@ end
 
 extremal_FerroSegers(gev_max, 0.95)
 
+function EI_estimate_plot(orbits, window_size)
+    EI = Float64[]
+    location = Float64[]
+    scale = Float64[]
+
+    for 
+
 println("x0 = 0 gets us 0.776479812607765 and x0 = 1/sqrt(2) = 1.0181")
