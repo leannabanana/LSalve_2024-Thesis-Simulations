@@ -7,20 +7,22 @@ include("methods/chaotic_system_methods.jl")
 Random.seed!(1234)
 
 ### Simulate a bunch of RV's 
-function exponential_distributions(n_vectors, vector_size, distribution)
+
+function generate_rv(n_vectors, vector_size, distribution)
     random_vectors = [rand(distribution, vector_size) for _ in 1:n_vectors]
     return random_vectors
 end
 
+
 ### Define window sizes
 window_size = 10
-num_vectors = 10^3
-vector_size = 10^5
+num_vectors = 1000
+vector_size = 1000
 
 distribution = Exponential(5)
-
 X_n = exponential_distributions(num_vectors, vector_size, distribution)
-     
+X_n_mat = reduce(hcat, X_n)
+
 ### Define a function which gets me parameters for changing window sizes for the moving minimum functional 
 
 function rv_minimum(random_variables, window_sizes)
@@ -107,18 +109,19 @@ savefig(min_params_1,"Output_Images/verifying_dependent_iid_parameters/Moving_mi
 savefig(av_params_min,"Output_Images/verifying_dependent_iid_parameters/muk_vs_mu_movingmin.pdf")
 savefig(av_params_av,"Output_Images/verifying_dependent_iid_parameters/muk_vs_mu_movingav.pdf")
 savefig(combined,"Output_Images/verifying_dependent_iid_parameters/combined_plots.pdf")
-
-test(X_n, 10)
+3*10^4-1
+X_n[1]
 
 function test(random_variables, window_size)
-    # location_params = Vector{Float64}(undef, 99999)
-    # scale_params = Vector{Float64}(undef, 99999)
+    # location_params = Vector{Float64}(undef,19)
+    # scale_params = Vector{Float64}(undef, 19)
 
     location_params = Float64[]
     scale_params = Float64[]
 
-    Threads.@threads for i in 2:length(random_variables)
-        minimums = @. moving_minimum(random_variables[1:i], window_size)
+    Threads.@threads for i in 10:length(random_variables[1])
+        data = [variable[1:i] for variable in random_variables]
+        minimums = @. moving_minimum(data, window_size)
         max_min = @. maximum(minimums)
 
         fit = gumbelfit(max_min)
@@ -127,17 +130,18 @@ function test(random_variables, window_size)
 
         append!(location_params, location_1)
         append!(scale_params, scale_1)
-    
+
     end
-    return location_params, scale_params
+     return location_params, scale_params
 end
 
-aaa = collect(2:vector_size)
-testing = test(X_n, 10)
+@btime this_sucks = test(X_n, 5)
 
 pl.plot(aaa, testing[1])
 pl.plot(aaa, testing[2])
 
+
+max_values = maximum(min, dims=1)[:]
 
 function test_2(random_variables, window_size)
     # location_params = Vector{Float64}(undef, 100)
@@ -160,4 +164,29 @@ function test_2(random_variables, window_size)
     end
     return location_params, scale_params
 end
+
+
+function test_3(random_variables, window_size)
+    # location_params = Vector{Float64}(undef,19)
+    # scale_params = Vector{Float64}(undef, 19)
+
+    location_params = Float64[]
+    scale_params = Float64[]
+
+    for i in 10:size(random_variables)[1]
+        minimums = moving_minimum_matrix(random_variables[1:i, :], window_size)
+        max_min = maximum(minimums, dims=1)[:]
+
+        fit = gumbelfit(max_min)
+        location_1 = location(fit)
+        scale_1 = scale(fit)
+
+        append!(location_params, location_1)
+        append!(scale_params, scale_1)
+    end
+     return location_params, scale_params
+end
+@btime a = test_2(X_n, 5); 
+@btime aaa = test(X_n, 5); 
+@btime what = test_3(X_n_mat, 5);
 
