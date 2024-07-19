@@ -113,6 +113,21 @@ function moving_minimum_matrix(data::Matrix{Float64}, window_size::Int)
     return result
 end
 
+function moving_average_matrix(data::Matrix{Float64}, window_size::Int)
+    # Get the number of columns and rows
+    n_rows, n_cols = size(data)
+    
+    # Create an empty matrix to store the result
+    result = Matrix{Float64}(undef, n_rows - window_size + 1, n_cols)
+    
+    # Apply moving minimum to each column
+    for j in 1:n_cols
+        result[:, j] = moving_average(view(data[:, j], :), window_size)
+    end
+    
+    return result
+end
+
 
 function simulate_orbits(initial_conditions::Vector{Float64}, a, n_length, perturbation, num_orbits)
     all_orbits = Vector{Vector{Float64}}(undef, num_orbits)
