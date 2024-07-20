@@ -207,7 +207,7 @@ function test_4(random_variables, window_size)
     location_params = Float64[]
     scale_params = Float64[]
 
-    for i in 10:size(random_variables)[1]
+    Threads.@threads for i in 10:size(random_variables)[1]
         minimums = moving_average_matrix(random_variables[1:i, :], window_size)
         max_min = maximum(minimums, dims=1)[:]
 
