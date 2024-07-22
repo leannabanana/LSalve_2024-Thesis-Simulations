@@ -7,8 +7,8 @@ include("chaotic_system_methods.jl")
 Random.seed!(1234)
 
 ### Define initial_conditions of length n_orbits
-n_orbits = 10^3
-orbit_length = 10^4
+n_orbits = 100
+orbit_length = 100
 initial_conditions = collect(1/n_orbits : 1/n_orbits : 1)
 
 ### Simulate orbits
@@ -22,8 +22,6 @@ observables = map(orbit -> observable_two(orbit, p1), orbits)
 mov_min_1 = moving_minimum.(observables, 15)
 gev_max = maximum.(mov_min_1)
 
-EI_data = DataFrame(EI_data = gev_max)
-CSV.write("Data_csv/EI_data.csv", EI_data, delim=',', header=true)
 
 ### Estimate θ
 
@@ -81,4 +79,27 @@ function EI_estimate_plot(orbits, window_size, x0)
     return EI, location, scale
 end
 
+# @btime EI_estimate_plot(orbits, 10, 0)
 println("x0 = 0 gets us 0.776479812607765 and x0 = 1/sqrt(2) = 1.0181")
+
+function EI_window(orbits, window_size, x0)
+    EI = Float64[]
+    location = Float64[]
+    scale = Float64[]
+
+    Threads.@threads for windows in window_sizes
+        observable = map(orbit -> observable_two(orbit, x0), orbits)
+        min = moving_minimum.(observable, windows)
+        max = maximum.(min)
+
+        EI_estimate = extremal_FerroSegers(max, 0.95)
+        fit = gumbelfit(max)
+        location_pm = location(fit)
+        scale_pm = scale(fit)
+    
+        append!(location, location_pm)
+        append!(scale, scale_pm)
+        append!(EI, EI_estimate)
+    end
+    return EI, location, scale
+end

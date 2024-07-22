@@ -15,8 +15,8 @@ end
 
 ### Define window sizes
 window_size = 10
-num_vectors = 1000
-vector_size = 10^4
+num_vectors = 100
+vector_size = 100
 
 distribution = Exponential(5)
 X_n = generate_rv(num_vectors, vector_size, distribution)
@@ -222,7 +222,7 @@ function test_4(random_variables, window_size)
 end
 
 
-what_2 = test_4(X_n_mat, 10)
+@profview test_4(X_n_mat, 10)
 
 
 x_axis =  collect(10:size(X_n_mat)[1])
