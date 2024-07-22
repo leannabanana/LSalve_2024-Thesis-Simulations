@@ -207,7 +207,7 @@ function test_4(random_variables, window_size)
     location_params = Float64[]
     scale_params = Float64[]
 
-    Threads.@threads for i in 10:size(random_variables)[1]
+    for i in 10:size(random_variables)[1]
         minimums = moving_average_matrix(random_variables[1:i, :], window_size)
         max_min = maximum(minimums, dims=1)[:]
 
@@ -222,7 +222,7 @@ function test_4(random_variables, window_size)
 end
 
 
-@profview test_4(X_n_mat, 10)
+ProfileView.@profview testing = test_4(X_n_mat, 6)
 
 
 x_axis =  collect(10:size(X_n_mat)[1])

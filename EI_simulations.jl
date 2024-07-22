@@ -1,40 +1,31 @@
 include("methods/chaotic_system_methods.jl")
 include("methods/EI_estimate.jl")
 
-n_orbits = 10^3
-orbit_length = 10^4
-initial_conditions = collect(1/n_orbits : 1/n_orbits : 1)
-
-### Simulate orbits
-a = 2 
-pertubation = 1/10^3
-# p0 = 0
-# p1 = 1/(sqrt(2*pi))
-
 Random.seed!(1234)
 
 ### Define initial_conditions of length n_orbits
 n_orbits = 100
 orbit_length = 100
 initial_conditions = collect(1/n_orbits : 1/n_orbits : 1)
-
+window_sizes = collect(1:15)
 ### Simulate orbits
-a = 2 
+a = 2   
 pertubation = 1/10^3
 p0 = 0
 p1 = 1/(sqrt(2))
-
-orbits = simulate_orbits(initial_conditions, a, orbit_length, pertubation, n_orbits)
-observables = map(orbit -> observable_two(orbit, p1), orbits)
-mov_min_1 = moving_minimum.(observables, 15)
-gev_max = maximum.(mov_min_1)
-
 
 av_orbits = simulate_orbits(initial_conditions, a, orbit_length, pertubation, n_orbits)
 observed_orbits_av = observable_two.(av_orbits, 1/sqrt(2))
 orbit_matrix_2 = reduce(hcat, observed_orbits_av)
 
+av = moving_average_matrix(orbit_matrix_2, 10)
+maxes = maximum(av, dims=1)[:]
+extremal_FerroSegers(maxes, 0.95)
+
+windowey = EI_window_av(orbit_matrix_2, window_sizes)
+pl.plot(window_sizes, windowey[3])
 av_par = EI_estimation_average(orbit_matrix_2, 10)
+
 
 av_orbits_2 = simulate_orbits(initial_conditions, a, orbit_length, pertubation, n_orbits)
 observed_orbits_av2 = observable_two.(av_orbits_2, 0)
