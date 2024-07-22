@@ -103,3 +103,54 @@ function EI_window(orbits, window_size, x0)
     end
     return EI, location, scale
 end
+
+
+function EI_estimation_average(orbits, window_size)
+    # location_params = Vector{Float64}(undef,19)
+    # scale_params = Vector{Float64}(undef, 19)
+
+    location_params = Float64[]
+    scale_params = Float64[]
+    EI = Float64[]
+
+    for i in 10:size(orbits)[1]
+        minimums = moving_average_matrix(orbits[1:i, :], window_size)
+        max_min = maximum(minimums, dims=1)[:]
+
+        EI_estimate = extremal_FerroSegers(max_min, 0.95)
+        fit = gumbelfit(max_min)
+        location_1 = location(fit)
+        scale_1 = scale(fit)
+
+        append!(location_params, location_1)
+        append!(scale_params, scale_1)
+        append!(EI, EI_estimate)
+    end
+     return location_params, scale_params, EI
+end
+
+
+function EI_estimation_min(orbits, window_size)
+    # location_params = Vector{Float64}(undef,19)
+    # scale_params = Vector{Float64}(undef, 19)
+
+    location_params = Float64[]
+    scale_params = Float64[]
+    EI = Float64[]
+
+ 
+    for i in 10:size(orbits)[1]
+        minimums = moving_minimum_matrix(orbits[1:i, :], window_size)
+        max_min = maximum(minimums, dims=1)[:]
+
+        EI_estimate = extremal_FerroSegers(max_min, 0.95)
+        fit = gumbelfit(max_min)
+        location_1 = location(fit)
+        scale_1 = scale(fit)
+
+        append!(location_params, location_1)
+        append!(scale_params, scale_1)
+        append!(EI, EI_estimate)
+    end
+     return location_params, scale_params, EI
+end

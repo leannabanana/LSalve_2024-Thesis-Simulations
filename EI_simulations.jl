@@ -1,5 +1,6 @@
-include("chaotic_system_methods.jl")
-include("EI_estimate.jl")
+include("methods/chaotic_system_methods.jl")
+include("methods/EI_estimate.jl")
+
 n_orbits = 10^3
 orbit_length = 10^4
 initial_conditions = collect(1/n_orbits : 1/n_orbits : 1)
@@ -9,6 +10,24 @@ a = 2
 pertubation = 1/10^3
 # p0 = 0
 # p1 = 1/(sqrt(2*pi))
+
+Random.seed!(1234)
+
+### Define initial_conditions of length n_orbits
+n_orbits = 100
+orbit_length = 100
+initial_conditions = collect(1/n_orbits : 1/n_orbits : 1)
+
+### Simulate orbits
+a = 2 
+pertubation = 1/10^3
+p0 = 0
+p1 = 1/(sqrt(2))
+
+orbits = simulate_orbits(initial_conditions, a, orbit_length, pertubation, n_orbits)
+observables = map(orbit -> observable_two(orbit, p1), orbits)
+mov_min_1 = moving_minimum.(observables, 15)
+gev_max = maximum.(mov_min_1)
 
 
 av_orbits = simulate_orbits(initial_conditions, a, orbit_length, pertubation, n_orbits)
