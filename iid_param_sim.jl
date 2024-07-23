@@ -3,6 +3,7 @@ This file simulates iid random variables to check how Gumbel parameters change
 """
 
 include("methods/chaotic_system_methods.jl")
+include("methods/EI_estimate.jl")
 
 Random.seed!(1234)
 
@@ -14,87 +15,72 @@ end
 
 
 ### Define window sizes
-window_size = 10
-num_vectors = 100
-vector_size = 100
+window_sizes = collect(1:13)
+num_vectors = 10^3
+vector_size = 10^4
 
 distribution = Exponential(5)
 X_n = generate_rv(num_vectors, vector_size, distribution)
 X_n_mat = reduce(hcat, X_n)
-
+X_n
 ### Define a function which gets me parameters for changing window sizes for the moving minimum functional 
-
 function rv_minimum(random_variables, window_sizes)
-    #shape_params = Float64[]
+    EI = Float64[]
     location_params = Float64[]
     scale_params = Float64[]
     
-    for windows in window_sizes
+    Threads.@threads for windows in window_sizes
         minimums = moving_minimum.(random_variables, windows)
         max_min = maximum.(minimums)
-
+        EI_estimate = extremal_FerroSegers(max_min, 0.95)
         fit = gumbelfit(max_min)
         #shapes = shape(fit)
         location_1 = location(fit)
         scale_1 = scale(fit)
 
-       # append!(shape_params, shapes)
+        append!(EI, EI_estimate)
         append!(location_params, location_1)
         append!(scale_params, scale_1)
     end
-    return  location_params, scale_params
+    return  location_params, scale_params, EI
 end
 
 #plots
 iid_case = rv_minimum(X_n, window_sizes)
 
-mus = pl.plot(block_length, iid_case[2], title=L"μ", legend=false, xlabel = "k")
-theta = pl.plot(block_length, iid_case[3], title=L"σ", legend=false, xlabel = "k")
-min_params_1 = pl.plot(mus, theta, size=(800, 600), layout=(1,2), plot_title="Simluated RV iid rv vs window size moving minimum")
+mus = scatter(window_sizes, iid_case[1], title=L"μ", legend=false, xlabel = "k", lc = "indianred2")
+sigma = scatter(window_sizes, iid_case[2], title=L"σ", legend=false, xlabel = "k",  lc = "indianred2")
+theta = scatter(window_sizes, iid_case[3], title=L"θ", legend=false, xlabel = "k",  lc = "indianred2")
+min_params_1 = pl.plot(mus, sigma, theta, size=(900, 450), layout=(1,3), plot_title="Simluated RV iid rv vs window size moving minimum")
 
 ### Define a function which gets me parameters for changing window sizes for the moving average functional
 function rv_average(random_variables, window_sizes)
-    shape_params = Float64[]
+    EI = Float64[]
     location_params = Float64[]
     scale_params = Float64[]
     
     for windows in window_sizes
         minimums = moving_average.(random_variables, windows)
         max_min = maximum.(minimums)
-        
-        shapes = 0.0
-        location_1 = 0.0
-        scale_1 = 0.0
-        
-        try
-            fit = gumbelfit(max_min)
-            shapes = shape(fit)
-            location_1 = location(fit)
-            scale_1 = scale(fit)
-        catch e
-            if isa(e, DomainError)
-                shapes = 0.0
-                location_1 = 0.0
-                scale_1 = 0.0
-            else
-                rethrow(e)
-            end
-        end
+        EI_estimate_plot = extremal_FerroSegers(max_min, 0.95)
 
-        append!(shape_params, shapes)
+        fit = gumbelfit(max_min)
+        location_1 = location(fit)
+        scale_1 = scale(fit)
+        append!(EI, EI_estimate_plot)
         append!(location_params, location_1)
         append!(scale_params, scale_1)
     end
-    return shape_params, location_params, scale_params
+    return EI, location_params, scale_params
 end
 
 #More plots
 iid_case_av = rv_average(X_n, window_sizes)
 
 mus_av = pl.plot(window_sizes, iid_case_av[2],legend=false, ylabel=L"μ", xlabel=L"k")
-theta_av = pl.plot(window_sizes, iid_case_av[3], legend=false, ylabel=L"σ", xlabel=L"k")
-
-av_params = pl.plot(mus_av, theta_av, size=(800,600), layout=(1,2), plot_title="Simulated RV Moving Average Parameters vs Window Size")
+sigma_av = pl.plot(window_sizes, iid_case_av[3], legend=false, ylabel=L"σ", xlabel=L"k")
+theta_av = pl.plot(window_sizes, iid_case_av[1], legend=false, ylabel=L"σ", xlabel=L"k")
+av_params = pl.plot(mus_av, sigma_av, theta_av, size=(900,500), layout=(1,3), plot_title="Simulated RV Moving Average Parameters vs Window Size")
 
 av_params_min = pl.plot(iid_case[2] .- iid_case[3][1].*log.(window_sizes), iid_case[2], legend=false, ylabel=L"\mu_k", xlabel=L"\mu = \mu_k - σ\log(k)", title=L"$\mu_k$ vs $\mu$ (moving minimum)")
 av_params_av = pl.plot(iid_case_av[2] .- iid_case_av[3][1].*log.(window_sizes), iid_case_av[2], legend=false, ylabel=L"\mu_k", xlabel=L"\mu = \mu_k - σ\log(k)", title=L"$\mu_k$ vs $\mu$  (moving average)")
@@ -222,7 +208,7 @@ function test_4(random_variables, window_size)
 end
 
 
-@profview test_4(X_n_mat, 10)
+test_4(X_n_mat, 10)
 
 
 x_axis =  collect(10:size(X_n_mat)[1])
