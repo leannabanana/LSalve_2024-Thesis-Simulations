@@ -94,7 +94,7 @@ function EI_estimation_min(orbits, window_size)
     EI = Float64[]
 
  
-    for i in 10:size(orbits)[1]
+    Threads.@threads for i in 10:size(orbits)[1]
         minimums = moving_minimum_matrix(orbits[1:i, :], window_size)
         max_min = maximum(minimums, dims=1)[:]
 
@@ -115,7 +115,7 @@ function EI_window_av(orbits, window_sizes)
     scale_params = Float64[]
     EI = Float64[]
     
-    for windows in window_sizes
+    Threads.@threads for windows in window_sizes
         minimums = moving_average_matrix(orbits, windows)
         max_min = maximum(minimums, dims=1)[:]
 
@@ -131,12 +131,13 @@ function EI_window_av(orbits, window_sizes)
 
 end
 
-function EI_window_min(orbits, window_sizes, x0)
+function EI_window_min(orbits, window_sizes)
     location_params = Float64[]
     scale_params = Float64[]
     EI = Float64[]
-    for windows in window_sizes
-        minimums = moving_minimum_matrix(orbits[1:i, :], window_size)
+    
+    Threads.@threads for windows in window_sizes
+        minimums = moving_minimum_matrix(orbits, windows)
         max_min = maximum(minimums, dims=1)[:]
 
         EI_estimate = extremal_FerroSegers(max_min, 0.95)

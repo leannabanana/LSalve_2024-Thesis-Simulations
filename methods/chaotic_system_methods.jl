@@ -5,10 +5,10 @@ This file initialises methods required to simulate chaotic systems
 import Plots as pl #The Extremes package uses Gadfly as its plotting package this distinguishes packaes
 using Plots, Extremes, Distributions, Gadfly, LaTeXStrings, Fontconfig, Random, DataFrames, CSV, Statistics, BenchmarkTools, ProfileView
 using DataStructures, Base.Threads
-
+Threads.nthreads()
 set_default_plot_size(25cm, 20cm) ### Choosing a default plot size
 
-##### Simulating our Chaotic Map 
+##### Simulating our Chaotic Map
 function chaotic_map(a, n_steps) #gives normal map
     y_values = Float64[]
     start = 1/n_steps
