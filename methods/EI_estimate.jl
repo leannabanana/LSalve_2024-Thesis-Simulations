@@ -85,6 +85,7 @@ function EI_estimation_average(orbits, window_size)
 end
 
 
+
 function EI_estimation_min(orbits, window_size)
     # location_params = Vector{Float64}(undef,19)
     # scale_params = Vector{Float64}(undef, 19)
@@ -94,7 +95,7 @@ function EI_estimation_min(orbits, window_size)
     EI = Float64[]
 
  
-    Threads.@threads for i in 10:size(orbits)[1]
+    for i in 10:size(orbits)[1]
         minimums = moving_minimum_matrix(orbits[1:i, :], window_size)
         max_min = maximum(minimums, dims=1)[:]
 
