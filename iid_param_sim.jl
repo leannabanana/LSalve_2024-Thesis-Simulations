@@ -22,7 +22,7 @@ vector_size = 10^4
 distribution = Exponential(5)
 X_n = generate_rv(num_vectors, vector_size, distribution)
 X_n_mat = reduce(hcat, X_n)
-X_n
+
 ### Define a function which gets me parameters for changing window sizes for the moving minimum functional 
 function rv_minimum(random_variables, window_sizes)
     EI = Float64[]
@@ -157,10 +157,11 @@ function test_3(random_variables, window_size)
 
     location_params = Float64[]
     scale_params = Float64[]
-
+    EI = Float64[]
     for i in 10:size(random_variables)[1]
         minimums = moving_minimum_matrix(random_variables[1:i, :], window_size)
         max_min = maximum(minimums, dims=1)[:]
+        EI_estimate = extremal_FerroSegers(max_min, 0.95)
 
         fit = gumbelfit(max_min)
         location_1 = location(fit)
@@ -168,13 +169,10 @@ function test_3(random_variables, window_size)
 
         append!(location_params, location_1)
         append!(scale_params, scale_1)
+        append!(EI, EI_estimate)
     end
-     return location_params, scale_params
+     return location_params, scale_params, EI
 end
-
-what = test_3(X_n_mat, 10)
-theme(:muted)
-
 
 x_axis =  collect(10:size(X_n_mat)[1])
 σ_k =scatter(x_axis, what[2], legend=false, xlabel = "Block Length", ylabel=L"\sigma^*", ms=1/2, ma =1/2, mc="indianred1", markerstrokecolor="indianred1", title ="GEV Maxima sampled from Exp(3)",  gridcolor=:gray19, gridalpha=1/2)
@@ -192,10 +190,12 @@ function test_4(random_variables, window_size)
 
     location_params = Float64[]
     scale_params = Float64[]
+    EI = Float64[]
 
-    Threads.@threads for i in 10:size(random_variables)[1]
+    for i in 10:size(random_variables)[1]
         minimums = moving_average_matrix(random_variables[1:i, :], window_size)
         max_min = maximum(minimums, dims=1)[:]
+        EI_estimate = extremal_FerroSegers(max_min, 0.95)
 
         fit = gumbelfit(max_min)
         location_1 = location(fit)
@@ -203,12 +203,21 @@ function test_4(random_variables, window_size)
 
         append!(location_params, location_1)
         append!(scale_params, scale_1)
+        append!(EI, EI_estimate)
     end
-     return location_params, scale_params
+     return location_params, scale_params, EI
 end
 
 
-test_4(X_n_mat, 10)
+what = test_3(X_n_mat, 10)
+
+what1 = DataFrame(location = what[1], scale =  what[2], EI =  what[3])
+CSV.write("Data_csv/iid_min_blocklength.csv", what1, delim=',', header=true)
+
+
+what2 = test_4(X_n_mat, 2)
+what12 = DataFrame(location = what2[1], scale =  what2[2], EI =  what2[3])
+CSV.write("Data_csv/iid_av_blocklength.csv", what12, delim=',', header=true)
 
 
 x_axis =  collect(10:size(X_n_mat)[1])
