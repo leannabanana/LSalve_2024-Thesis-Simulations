@@ -15,9 +15,9 @@ end
 
 
 ### Define window sizes
-window_sizes = collect(1:13)
+window_sizes = collect(1:10)
 num_vectors = 10^3
-vector_size = 10^4
+vector_size = 10^5
 
 distribution = Exponential(5)
 X_n = generate_rv(num_vectors, vector_size, distribution)
@@ -29,7 +29,7 @@ function rv_minimum(random_variables, window_sizes)
     location_params = Float64[]
     scale_params = Float64[]
     
-    Threads.@threads for windows in window_sizes
+    for windows in window_sizes
         minimums = moving_minimum.(random_variables, windows)
         max_min = maximum.(minimums)
         EI_estimate = extremal_FerroSegers(max_min, 0.95)
@@ -48,11 +48,11 @@ end
 #plots
 iid_case = rv_minimum(X_n, window_sizes)
 
-mus = scatter(window_sizes, iid_case[1], title=L"μ", legend=false, xlabel = "k", lc = "indianred2")
-sigma = scatter(window_sizes, iid_case[2], title=L"σ", legend=false, xlabel = "k",  lc = "indianred2")
-theta = scatter(window_sizes, iid_case[3], title=L"θ", legend=false, xlabel = "k",  lc = "indianred2")
-min_params_1 = pl.plot(mus, sigma, theta, size=(900, 450), layout=(1,3), plot_title="Simluated RV iid rv vs window size moving minimum")
-
+mus = scatter(window_sizes, iid_case[1], title=L"μ", legend=false, xlabel = "k", mc = "indianred2", ms = 2.5)
+sigma = scatter(window_sizes, iid_case[2], title=L"σ", legend=false, xlabel = "k",  mc = "indianred2", ms = 2.5)
+theta = scatter(window_sizes, iid_case[3], title=L"θ", legend=false, xlabel = "k",  mc = "indianred2", ms = 2.5)
+min_params_1 = pl.plot(mus, sigma, size=(650, 400), layout=(1,2), plot_title="Simluated Exp(3) vs window size moving minimum")
+savefig(min_params_1,"Output_Images/verifying_dependent_iid_parameters/aaaaa.pdf")
 ### Define a function which gets me parameters for changing window sizes for the moving average functional
 function rv_average(random_variables, window_sizes)
     EI = Float64[]
