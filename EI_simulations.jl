@@ -7,7 +7,7 @@ Random.seed!(1234)
 n_orbits = 10^3
 orbit_length = 10^5
 initial_conditions = collect(1/n_orbits : 1/n_orbits : 1)
-window_sizes = collect(1:13)
+window_sizes = collect(1:10)
 a = 2   
 pertubation = 1/10^3
 p0 = 0
@@ -19,7 +19,8 @@ orbit_matrix_2 = reduce(hcat, observed_orbits_av)
 estimate = EI_window_min(orbit_matrix_2, window_sizes)
 
 df1 = DataFrame(location = estimate[1], scale = estimate[2], EI = estimate[3])
-# CSV.write("Data_csv/min_nonrecurrent_windowsize_EI.csv", df1, delim=',', header=true)
+CSV.write("Data_csv/min_nonrecurrent_windowsize_EI.csv", df1, delim=',', header=true)
+
 g1 = scatter(window_sizes, estimate[1], xticks=1:1:13, xlabel = " k ", ylabel = L"\mu", title=L"Moving minimum $x_0 = \dfrac{1}{\sqrt{2}}$", mc="tomato2", legend=false, ms=3, ma=1)
 pl.plot!(window_sizes,  estimate[1][1] ./ ( exp(2) .^(window_sizes.-1.0)))
 
