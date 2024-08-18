@@ -8,8 +8,8 @@ Random.seed!(1234)
 
 
 #Define Constants
-a = 3
-α = 1/6
+a = 2
+α = 1/3
 x0 = 1/3
 c = 2
 interations = 10^3
@@ -56,6 +56,9 @@ orbiting = pl.plot(orbit_1, orbit_2, orbit_3, layout=(1,3), size=(1100,500))
 #Observable 1
 fit_obs1 = gevfit(maximums_1)
 d1 = diagnosticplots(fit_obs1)
+
+shape(fit_obs1)
+scale(fit_obs1)
 #Observable 2
 fit_obs2 = gevfit(maximums_2)
 d2 = diagnosticplots(fit_obs2)
