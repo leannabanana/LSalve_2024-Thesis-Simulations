@@ -46,7 +46,7 @@ savefig(gumbelmin,"Output_Images/18-08-2024/gumbel_min_1sqrt2.pdf")
 
 estimate_av = EI_window_av(mat_orb, window_sizes)
 m1 = scatter(window_sizes, estimate_av[1], xticks=1:1:13, xlabel = " k ", ylabel = L"\mu", title=L"Moving av $x_0 = 0$", mc="tomato2", legend=false, ms=3, ma=1)
-pl.plot!(window_sizes, (estimate_av[1][1] ./ log.(2 .* window_sizes .- 1)))
+pl.plot!(window_sizes, (estimate_av[1][1] ./ log.(2 .* (window_sizes .- 1))))
 
 m2 = scatter(window_sizes, estimate_av[2], xticks=1:1:13, xlabel = " k ", ylabel = L"\sigma", title=L"Moving av $x_0 = \dfrac{1}{\sqrt{2}}$", mc="tomato2", legend=false, ms=3, ma=1)
 m3 = scatter(window_sizes, estimate_av[3], xticks=1:1:13, xlabel = " k ", ylabel = L"\theta", title=L"Moving av $x_0 = \dfrac{1}{\sqrt{2}}$", mc="tomato2", legend=false, ms=3, ma=1)
