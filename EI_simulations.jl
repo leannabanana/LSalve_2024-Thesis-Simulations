@@ -14,16 +14,16 @@ p0 = 0
 p1 = 1/(sqrt(2))
 
 av_orbits = simulate_orbits(initial_conditions, a, orbit_length, pertubation, n_orbits)
-
-observed_orbits_av = observable_two.(av_orbits, 1/sqrt(2))
-
+observed_orbits_av = observable_two.(av_orbits, p1)
 orbit_matrix_2 = reduce(hcat, observed_orbits_av)
 estimate = EI_window_min(orbit_matrix_2, window_sizes)
 
 df1 = DataFrame(location = estimate[1], scale = estimate[2], EI = estimate[3])
-CSV.write("Data_csv/min_nonrecurrent_windowsize_EI.csv", df1, delim=',', header=true)
-
+# CSV.write("Data_csv/min_nonrecurrent_windowsize_EI.csv", df1, delim=',', header=true)
 g1 = scatter(window_sizes, estimate[1], xticks=1:1:13, xlabel = " k ", ylabel = L"\mu", title=L"Moving minimum $x_0 = \dfrac{1}{\sqrt{2}}$", mc="tomato2", legend=false, ms=3, ma=1)
+pl.plot!(window_sizes,  estimate[1][1] ./ ( exp(2) .^(window_sizes.-1.0)))
+
+
 g2 = scatter(window_sizes, estimate[2], xticks=1:1:13, xlabel = " k ", ylabel = L"\sigma", title=L"Moving minimum $x_0 = \dfrac{1}{\sqrt{2}}$", mc="tomato2", legend=false, ms=3, ma=1)
 g3 = scatter(window_sizes, estimate[3], xticks=1:1:13, xlabel = " k ", ylabel = L"\theta", title=L"Moving minimum $x_0 = \dfrac{1}{\sqrt{2}}$", mc="tomato2", legend=false, ms=3, ma=1)
 
@@ -50,6 +50,8 @@ df3 = DataFrame(location = estimate_5[1], scale = estimate_5[2], EI = estimate_5
 CSV.write("Data_csv/min_recurrent_windowsize_EI.csv", df3, delim=',', header=true)
 
 g7 = scatter(window_sizes, estimate_5[1], xlabel = " k ", ylabel = L"\mu", title=L"Moving min $x_0 = 0$", mc="tomato2", legend=false)
+pl.plot!(window_sizes,  estimate_5[1][1] ./ ( exp(2) .^(window_sizes.-1.0)))
+
 g8 = scatter(window_sizes, estimate_5[2], xlabel = " k ", ylabel = L"\sigma", title=L"Moving min $x_0 = 0$", mc="tomato2", legend=false)
 g9 = scatter(window_sizes, estimate_5[3], xlabel = " k ", ylabel = L"\theta", title=L"Moving min $x_0 = 0$", mc="tomato2", legend=false)
 

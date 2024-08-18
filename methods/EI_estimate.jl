@@ -39,7 +39,7 @@ function EI_estimate_plot(orbits, window_size, x0)
     location = Float64[]
     scale = Float64[]
 
-    Threads.@threads for i in 2:length(orbits)
+     for i in 2:length(orbits)
         observable = map(orbit -> observable_two(orbit, x0), orbits)
         min = moving_minimum.(observable, window_size)
         max = maximum.(min)
@@ -115,20 +115,24 @@ function EI_window_av(orbits, window_sizes)
     location_params = Float64[]
     scale_params = Float64[]
     EI = Float64[]
+    shape_params = Float64[]
+
     
-    Threads.@threads for windows in window_sizes
+    for windows in window_sizes
         minimums = moving_average_matrix(orbits, windows)
         max_min = maximum(minimums, dims=1)[:]
 
         EI_estimate = extremal_FerroSegers(max_min, 0.95)
         location_1 = location(gevfit(max_min))
         scale_1 = scale(gevfit(max_min))
+        shapes = shape(gevfit(max_min))
 
         append!(location_params, location_1)
         append!(scale_params, scale_1)
         append!(EI, EI_estimate)
+        append!(shape_params, shapes)
     end
-    return location_params, scale_params, EI
+    return location_params, scale_params, EI, shape_params
 
 end
 
@@ -136,19 +140,67 @@ function EI_window_min(orbits, window_sizes)
     location_params = Float64[]
     scale_params = Float64[]
     EI = Float64[]
+    shape_params = Float64[]
     
-    Threads.@threads for windows in window_sizes
+    for windows in window_sizes
         minimums = moving_minimum_matrix(orbits, windows)
         max_min = maximum(minimums, dims=1)[:]
 
         EI_estimate = extremal_FerroSegers(max_min, 0.95)
         location_1 = location(gevfit(max_min))
         scale_1 = scale(gevfit(max_min))
+        shapes = shape(gevfit(max_min))
 
         append!(location_params, location_1)
         append!(scale_params, scale_1)
         append!(EI, EI_estimate)
+        append!(shape_params, shapes)
     end
-    return location_params, scale_params, EI
+    return location_params, scale_params, EI, shape_params
 
+end
+
+
+function gumbel_window_min(orbits, window_sizes)
+    location_params = Float64[]
+    scale_params = Float64[]
+    EI = Float64[]
+
+    for windows in window_sizes
+        minimums = moving_minimum_matrix(orbits, windows)
+        max_min = maximum(minimums, dims=1)[:]
+    
+        EI_estimate = extremal_FerroSegers(max_min, 0.95)
+        location_1 = location(gumbelfit(max_min))
+        scale_1 = scale(gumbelfit(max_min))
+  
+    
+        append!(location_params, location_1)
+        append!(scale_params, scale_1)
+        append!(EI, EI_estimate)
+    
+        end
+        return location_params, scale_params, EI
+end
+
+
+function gumbel_window_av(orbits, window_sizes)
+    location_params = Float64[]
+    scale_params = Float64[]
+    EI = Float64[]
+
+    for windows in window_sizes
+        minimums = moving_average_matrix(orbits, windows)
+        max_min = maximum(minimums, dims=1)[:]
+    
+        EI_estimate = extremal_FerroSegers(max_min, 0.95)
+        location_1 = location(gumbelfit(max_min))
+        scale_1 = scale(gumbelfit(max_min))
+    
+        append!(location_params, location_1)
+        append!(scale_params, scale_1)
+        append!(EI, EI_estimate)
+    
+        end
+        return location_params, scale_params, EI
 end

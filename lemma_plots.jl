@@ -29,8 +29,9 @@ pain =  ( exp.((av_nonrecurrent.location .- av_iid.location )./ av_nonrecurrent.
 pl.plot(x_values, pain)
 pl.plot!(x_values, av_iid.EI)
 
-scatter(x_values, min_nonrecurrent.scale)
+scatter(x_values, min_nonrecurrent.scale, markerstrokewidth = 1/5, ms=3)
 
+scatter(x_values, min_recurrent.scale, markerstrokewidth = 1/5, ms=3)
 
 
 
