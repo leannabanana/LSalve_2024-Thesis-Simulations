@@ -146,10 +146,12 @@ function EI_window_min(orbits, window_sizes)
         minimums = moving_minimum_matrix(orbits, windows)
         max_min = maximum(minimums, dims=1)[:]
 
+        fit = gevfit(max_min)
+
         EI_estimate = extremal_FerroSegers(max_min, 0.95)
-        location_1 = location(gevfit(max_min))
-        scale_1 = scale(gevfit(max_min))
-        shapes = shape(gevfit(max_min))
+        location_1 = location(fit)
+        scale_1 = scale(fit)
+        shapes = shape(fit)
 
         append!(location_params, location_1)
         append!(scale_params, scale_1)
@@ -159,6 +161,21 @@ function EI_window_min(orbits, window_sizes)
     return location_params, scale_params, EI, shape_params
 
 end
+
+
+function frequency_plots_min(data, window_sizes)
+    for windows in window_sizes
+
+        minimums = moving_minimum_matrix(data, windows)
+        max_min = maximum(minimums, dims=1)[:]
+
+        fit = gevfit(max_min)
+        freq = histplot(fit)
+        draw(PDF("Output_Images/frequency_plots/frequency_window"*string(windows)*".pdf",25cm, 15cm), freq)
+
+    end
+end
+
 
 
 function gumbel_window_min(orbits, window_sizes)
@@ -203,4 +220,18 @@ function gumbel_window_av(orbits, window_sizes)
     
         end
         return location_params, scale_params, EI
+end
+
+
+function leanna_mu( λ, k, μ_1, σ_1, θ_2, θ_1) ### returns μ_2
+
+    μ_2 = λ^(-(k-1.0))*μ_1 + λ^(-(k-1.0))*σ_1*log(θ_2/ θ_1)
+
+    return μ_2
+end
+
+function leanna_mu_2( k, μ_1, σ_1, θ_2, θ_1 )
+    μ_2 = μ_1/k + ((σ_1 /k) *log(θ_2/ θ_1)) 
+
+    return μ_2
 end

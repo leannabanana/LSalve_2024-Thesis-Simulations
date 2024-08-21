@@ -55,6 +55,7 @@ orbiting = pl.plot(orbit_1, orbit_2, orbit_3, layout=(1,3), size=(1100,500))
 ### Fitting a GEV
 #Observable 1
 fit_obs1 = gevfit(maximums_1)
+d11 = histplot(fit_obs1)
 d1 = diagnosticplots(fit_obs1)
 
 shape(fit_obs1)
@@ -68,7 +69,8 @@ fit_obs3 = gevfit(maximums_3)
 d3 = diagnosticplots(fit_obs3)
 
 #Save Diagnostic Tests
-#draw(PDF("Output_Images/gev_diagnostic_tests/frechet"*Date*".pdf", 25cm, 15cm), d1)
+draw(PDF("Output_Images/gev_diagnostic_tests/frecheee.pdf",25cm, 15cm), d11)
 #draw(PDF("Output_Images/gev_diagnostic_tests/gumbell"*Date*".pdf",25cm, 15cm), d2)
 #draw(PDF("Output_Images/gev_diagnostic_tests/weibull"*Date*".pdf", 25cm, 15cm), d3)
-
+Date = 3
+"Output_Images/gev_diagnostic_tests/gumbell"* string(Date) *".pdf"
