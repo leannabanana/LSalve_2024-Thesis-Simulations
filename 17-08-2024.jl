@@ -12,19 +12,24 @@ pertubation = 1/10^3
 p0 = 0
 p1 = 1/(sqrt(2))
 
-
-
 orbits = simulate_orbits(initial_conditions, a, orbit_length, pertubation, n_orbits)
-average_orbits = observable_two.(orbits, p1)
+average_orbits = observable_two.(orbits, p0)
 mat_orb = reduce(hcat, average_orbits)
-frequency_plots_min(mat_orb, window_sizes)
+av_est1 = EI_window_av(mat_orb, window_sizes)
+
+df4 = DataFrame(location = av_est1[1], scale = av_est1[2], EI = av_est1[3], shape = av_est[4])
+CSV.write("Data_csv/updated_data/av_0.csv", df4, delim=',', header=true)
 
 
 estimate = EI_window_min(mat_orb, window_sizes)
 
-mat_orb
+average_orbits_1= observable_two.(orbits, 0)
+mat_orb_1 = reduce(hcat, average_orbits_0)
+estimate_0 = EI_window_min(mat_orb_1, window_sizes)
 
 
+dfs = CSV.read("Data_csv/updated_data/final_gevfit_min_0.csv", DataFrame)
+df1 = CSV.read("Data_csv/updated_data/final_gevfit_min_1sqrt2_data.csv", DataFrame)
 
 new_mu = leanna_mu_2.(window_sizes, estimate[1][1], estimate[2][1], estimate[4], estimate[4][1])
 
@@ -32,22 +37,36 @@ dfmatrix = DataFrame(mat_orb, :auto)
 CSV.write("Data_csv/updated_data/trajectories_106_1sqrt2.csv", estimate)
 
 df = DataFrame(location = estimate[1], scale = estimate[2], EI = estimate[3], shape = estimate[4])
-CSV.write("Output_Images/18-08-2024/gevfit_min_1sqrt2_data.csv", df, delim=',', header=true)
+CSV.write("Data_csv/updated_data/final_gevfit_min_1sqrt2_data.csv", df, delim=',', header=true)
 
-g1 = scatter(window_sizes, estimate[1], xticks=1:1:13, xlabel = " k ", ylabel = L"\mu", title=L"Moving minimum $x_0 = \dfrac{1}{\sqrt{2}}$", mc="tomato2",  ms=3, ma=1)
-pl.plot!(window_sizes, new_mu, label=L"μ_2 = μ_1 λ^{-(k - 1)}")
+df = DataFrame(location = estimate_0[1], scale = estimate_0[2], EI = estimate_0[3], shape = estimate_0[4])
+CSV.write("Data_csv/updated_data/final_gevfit_min_0.csv", df, delim=',', header=true)
+
+mus = 2 .^( .- (window_sizes .-1.0)).*dfs.location[1] + dfs.scale[1]* 2 .^( .- (window_sizes .-1.0)).*log.(dfs.EI ./ dfs.EI[1])
 
 
-g2 = scatter(window_sizes, estimate[2], xticks=1:1:13, xlabel = " k ", ylabel = L"\sigma", title=L"Moving minimum $x_0 = \dfrac{1}{\sqrt{2}}$", mc="tomato2", ms=3, ma=1)
-pl.plot!(window_sizes, leanna_mu_2(window_sizes, ), label=L"σ_2 = σ_1 λ^{\exp(2)k - 1}")
-pl.plot!(window_sizes, estimate[2][1].* 2 .^(-1.0 .* ( window_sizes .- 1)), label=L"σ_2 = σ_1 λ^{-(k - 1)}")
+g1 = scatter(window_sizes, dfs.location, xticks=1:1:13, xlabel = " k ", ylabel = L"\mu", title=L"Moving minimum $x_0 = 0$", mc="tomato2",  ms=3, ma=1)
+pl.plot!(window_sizes, dfs.location[1] ./ 2 .^(window_sizes .- 1.0) + dfs.scale[1] .* log.(dfs.EI ./ dfs.EI[1]) ./ 2 .^(window_sizes .- 1.0))
 
-g3 = scatter(window_sizes, estimate[3], xticks=1:1:13, xlabel = " k ", ylabel = L"\theta", title=L"Moving minimum $x_0 = \dfrac{1}{\sqrt{2}}$", mc="tomato2", legend=false, ms=3, ma=1)
-g4 = scatter(window_sizes, estimate[4], xticks=1:1:13, xlabel = " k ", ylabel = L"ξ", title=L"Moving minimum $x_0 = \dfrac{1}{\sqrt{2}}$", mc="tomato2", legend=false, ms=3, ma=1)
 
-gplot = pl.plot(g1, g2, layout = @layout([A B]), size=(700,400), plot_title="GEV Fit", plot_titlevspan=0.04)
+g2 = scatter(window_sizes, dfs.scale, xticks=1:1:13, xlabel = " k ", ylabel = L"\sigma", title=L"Moving minimum $x_0 = 0$", mc="tomato2", ms=3, ma=1)
+pl.plot!(window_sizes, dfs.scale[1] ./ 2 .^(  (window_sizes .-1)  ))
 
-savefig(gplot,"Output_Images/18-08-2024/mingevfit_lines_1sqrt2.pdf")
+
+g3 = scatter(window_sizes, dfs.EI, xticks=1:1:13, xlabel = " k ", ylabel = L"\theta", title=L"Moving minimum $x_0 = 0$", mc="tomato2", legend=false, ms=3, ma=1)
+g4 = scatter(window_sizes, dfs.shape, xticks=1:1:13, xlabel = " k ", ylabel = L"ξ", title=L"Moving minimum $x_0 = \dfrac{1}{\sqrt{2}}$", mc="tomato2", legend=false, ms=3, ma=1)
+
+min = scatter(window_sizes, df1.location, xticks=1:1:13, xlabel = " k ", ylabel = L"\mu", title="Moving minimum non-recurrent", mc="tomato2",  ms=3, ma=1)
+pl.plot!(window_sizes, df1.location[1] ./ 3 .^(window_sizes .- 1.0) + dfs.scale[1] .* log.(dfs.EI ./ dfs.EI[1]) ./ 3 .^(window_sizes .- 1.0))
+
+
+min2 = scatter(window_sizes, df1.scale, xticks=1:1:13, xlabel = " k ", ylabel = L"\sigma", title="Moving minimum non-recurrent", mc="tomato2", ms=3, ma=1)
+pl.plot!(window_sizes, dfs.scale[1] ./ exp(2) .^(window_sizes .-1 ))
+
+
+min3 = scatter(window_sizes, dfs.shape, xticks=1:1:13, xlabel = " k ", ylabel = L"\theta", title="Moving minimum non-recurrent", mc="tomato2", legend=false, ms=3, ma=1)
+min4 = scatter(window_sizes, estimate[4], xticks=1:1:13, xlabel = " k ", ylabel = L"ξ", title="Moving minimum non-recurrent", mc="tomato2", legend=false, ms=3, ma=1)
+
 
 
 orbits = simulate_orbits(initial_conditions, a, orbit_length, pertubation, n_orbits)
@@ -90,26 +109,36 @@ m4 = scatter(window_sizes, estimate_av[4], xticks=1:1:13, xlabel = " k ", ylabel
 avfit = pl.plot(m1, m2, m3, m4, layout = @layout([A B ; C D]), size=(700,550), plot_title="GEV Fit", plot_titlevspan=0.04)
 savefig(avfit,"Output_Images/updated_plots/gevfit_av__1sqrt2.pdf")
 
-estimate[3]
-gumbel_av = gumbel_window_av(mat_orb, window_sizes)
+################ USING ONLY CSV 
+
+m_0 = CSV.read("Data_csv/updated_data/final_gevfit_min_0.csv", DataFrame)
+m_12 = CSV.read("Data_csv/updated_data/final_gevfit_min_1sqrt2_data.csv", DataFrame)
+
+av_0 = CSV.read("Data_csv/updated_data/av_0.csv", DataFrame)
+av_12 = CSV.read("Data_csv/updated_data/av_1sqrt2.csv", DataFrame)
 
 
-gm1 = scatter(window_sizes, gumbel_av[1], xticks=1:1:13, legend=true, label="simulated", xlabel = " k ", ylabel = L"\mu", title=L"Moving av $x_0 = \dfrac{1}{\sqrt{2}}$", mc="tomato2", ms=3, ma=1)
-# pl.plot!(window_sizes, gumbel_av[1][1] ./ log.(2 .* (window_sizes)), label = L"μ_2 = \dfrac{μ_1}{\log(2k)}") 
-# pl.plot!(window_sizes, gumbel_av[1][1] ./ log.(2 .^ (window_sizes)), label = L"μ_2 = \dfrac{μ_1}{\log(2^k)}") 
-pl.plot!(window_sizes, leanna_mu_2.(window_sizes, gumbel_av[1][1], gumbel_av[2][1], gumbel_av[3], gumbel_av[3][1]), label = L"μ_2 = \dfrac{μ_1}{k}")
+g1 = scatter(window_sizes, av_12.scale, xticks=1:1:13,
+ xlabel = " k ", ylabel = L"\sigma", mc="tomato2",  ms=3, ma=1)
+pl.plot!(window_sizes,  av_0.scale[1] ./ window_sizes)
+sigma_2 = av_0.scale[1] ./ window_sizes
+
+g2 = scatter(window_sizes, av_12.location, xticks=1:1:13,
+ xlabel = " k ", ylabel = L"\mu", mc="tomato2",  ms=3, ma=1)
+pl.plot!(window_sizes, av_12.location[1] ./ window_sizes.^(2) .+ sigma_2.*log.(av_12.EI ./av_12.EI[1]) )
 
 
 
+g11 = scatter(window_sizes, av_0.scale, xticks=1:1:13,
+xlabel = " k ", ylabel = L"\sigma", mc="tomato2",  ms=3, ma=1)
+pl.plot!(window_sizes, av_0.scale[1]./ 2 .^(window_sizes .- 1))
 
-gm2 = scatter(window_sizes, gumbel_av[2], xticks=1:1:13, xlabel = " k ", ylabel = L"\sigma", title=L"Moving av $x_0 = \dfrac{1}{\sqrt{2}}$", mc="tomato2", legend = true, label = "simulated",  ms=3, ma=1)
-pl.plot!(window_sizes, gumbel_av[2][1] ./ window_sizes, label= L"σ_2 = \dfrac{σ_1}{k}")
-
-gm3 = scatter(window_sizes, gumbel_av[3], xticks=1:1:13, xlabel = " k ", ylabel = L"\theta", title=L"Moving av $x_0 = \dfrac{1}{\sqrt{2}}$", mc="tomato2", legend=false, ms=3, ma=1)
-
-gavfit = pl.plot(gm1, gm2, layout = @layout([A B]), size=(700,400), plot_title="Gumbel Fit", plot_titlevspan=0.04)
+g13 = scatter(window_sizes, av_0.shape)
 
 
-savefig(gavfit,"Output_Images/18-08-2024/gumbelfit_fits_1sqrt2.pdf")
 
-m4 = scatter(window_sizes, estimate_av[4], xticks=1:1:13, xlabel = " k ", ylabel = L"ξ", title=L"Moving av $x_0 = \dfrac{1}{\sqrt{2}}$", mc="tomato2", legend=false, ms=3, ma=1)
+g21 = scatter(window_sizes, av_0.location, xticks=1:1:13,
+xlabel = " k ", ylabel = L"\sigma", mc="tomato2",  ms=3, ma=1)
+pl.plot!(window_sizes, av_0.location[1] ./ 2 .^(window_sizes .- 1))
+
+

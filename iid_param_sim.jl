@@ -20,6 +20,7 @@ num_vectors = 10^3
 vector_size = 10^5
 
 distribution = Exponential(5)
+
 X_n = generate_rv(num_vectors, vector_size, distribution)
 X_n_mat = reduce(hcat, X_n)
 
@@ -48,11 +49,20 @@ end
 #plots
 iid_case = rv_minimum(X_n, window_sizes)
 
+
 mus = scatter(window_sizes, iid_case[1], title=L"μ", legend=false, xlabel = "k", mc = "indianred2", ms = 2.5)
+pl.plot!(window_sizes, iid_case[1][1] ./ window_sizes)
+
 sigma = scatter(window_sizes, iid_case[2], title=L"σ", legend=false, xlabel = "k",  mc = "indianred2", ms = 2.5)
+pl.plot!(window_sizes, exp.(-1 .* ( iid_case[2][1].*window_sizes)))
+
+exp.( (iid_case[2][1] .* window_sizes))
+iid_case[2]
+
 theta = scatter(window_sizes, iid_case[3], title=L"θ", legend=false, xlabel = "k",  mc = "indianred2", ms = 2.5)
 min_params_1 = pl.plot(mus, sigma, size=(650, 400), layout=(1,2), plot_title="Simluated Exp(3) vs window size moving minimum")
 savefig(min_params_1,"Output_Images/verifying_dependent_iid_parameters/aaaaa.pdf")
+
 ### Define a function which gets me parameters for changing window sizes for the moving average functional
 function rv_average(random_variables, window_sizes)
     EI = Float64[]
@@ -77,10 +87,19 @@ end
 #More plots
 iid_case_av = rv_average(X_n, window_sizes)
 
-mus_av = pl.plot(window_sizes, iid_case_av[2],legend=false, ylabel=L"μ", xlabel=L"k")
-sigma_av = pl.plot(window_sizes, iid_case_av[3], legend=false, ylabel=L"σ", xlabel=L"k")
+mus_av = scatter(window_sizes, iid_case_av[2],legend=false, ylabel=L"μ", xlabel=L"k")
+pl.plot!(window_sizes, iid_case_av[2][1]./(window_sizes .- 1))
+
+
+sigma_av = scatter(window_sizes, iid_case_av[3], legend=false, ylabel=L"σ", xlabel=L"k")
+pl.plot!(window_sizes, iid_case[3][1] ./ 2 .^ (window_sizes .- 1 ))
+
+
+
 theta_av = pl.plot(window_sizes, iid_case_av[1], legend=false, ylabel=L"σ", xlabel=L"k")
-av_params = pl.plot(mus_av, sigma_av, theta_av, size=(900,500), layout=(1,3), plot_title="Simulated RV Moving Average Parameters vs Window Size")
+av_params = pl.plot(mus_av, sigma_av, size=(650, 400), layout=(1,2), plot_title="Simluated Exp(3) vs window size moving average")
+
+
 
 av_params_min = pl.plot(iid_case[2] .- iid_case[3][1].*log.(window_sizes), iid_case[2], legend=false, ylabel=L"\mu_k", xlabel=L"\mu = \mu_k - σ\log(k)", title=L"$\mu_k$ vs $\mu$ (moving minimum)")
 av_params_av = pl.plot(iid_case_av[2] .- iid_case_av[3][1].*log.(window_sizes), iid_case_av[2], legend=false, ylabel=L"\mu_k", xlabel=L"\mu = \mu_k - σ\log(k)", title=L"$\mu_k$ vs $\mu$  (moving average)")
