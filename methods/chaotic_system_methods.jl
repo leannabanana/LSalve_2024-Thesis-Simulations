@@ -3,7 +3,7 @@ This file initialises methods required to simulate chaotic systems
 """
 ## Plots and Gadly are both plotting packages a plot command
 import Plots as pl #The Extremes package uses Gadfly as its plotting package this distinguishes packaes
-using Plots, Extremes, Distributions, LaTeXStrings, Fontconfig, Random, DataFrames, CSV, Statistics, BenchmarkTools
+using Plots, Extremes, Distributions, LaTeXStrings, Fontconfig, Random, DataFrames, CSV, Statistics, BenchmarkTools, RollingFunctions
 using DataStructures, Base.Threads
 Threads.nthreads()
 # set_default_plot_size(25cm, 20cm) ### Choosing a default plot size
@@ -127,20 +127,6 @@ function moving_minimum_matrix(data::Matrix{Float64}, window_size::Int)
 end
 
 
-function moving_minimum_matrix(data::Matrix{Float64}, window_size::Int)
-    # Get the number of rows and columns
-    n_rows, n_cols = size(data)
-    
-    # Create an empty matrix to store the result
-    result = Matrix{Float64}(undef, n_rows - window_size + 1, n_cols)
-    
-    # Apply moving minimum to each column
-    for j in 1:n_cols
-        result[:, j] = moving_minimum2(view(data[:, j], :), window_size)
-    end
-    
-    return result
-end
 
 function moving_average_matrix(data::Matrix{Float64}, window_size::Int)
     # Get the number of columns and rows

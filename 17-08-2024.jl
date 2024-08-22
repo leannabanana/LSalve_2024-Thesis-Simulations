@@ -3,8 +3,8 @@ include("methods/chaotic_system_methods.jl")
 
 Random.seed!(1234)
 
-n_orbits = 10
-orbit_length = 5
+n_orbits = 10^3
+orbit_length = 10^5
 initial_conditions = collect(1/n_orbits : 1/n_orbits : 1)
 window_sizes = collect(1:10)
 a = 2   
@@ -15,28 +15,6 @@ p1 = 1/(sqrt(2))
 orbits = simulate_orbits(initial_conditions, a, orbit_length, pertubation, n_orbits)
 average_orbits = observable_two.(orbits, p0)
 mat_orb = reduce(hcat, average_orbits)
-
-function moving_minimum4(matrix::Matrix{T}, window_size::Int) where T
-    rows, cols = size(matrix)
-    if window_size > rows
-        error("Window size must be less than or equal to the number of rows.")
-    end
-
-    # Initialize result matrix
-    result = Matrix{T}(undef, rows - window_size + 1, cols)
-
-    for col in 1:cols
-        for row in 1:(rows - window_size + 1)
-            window = matrix[row:(row + window_size - 1), col]
-            result[row, col] = minimum(window)
-        end
-    end
-
-    return result
-end
-
-
-moving_minimum4(mat_orb, 2)
 
 moving_minimum_matrix(mat_orb, 2)
 est = EI_window_av(mat_orb, window_sizes)
@@ -169,16 +147,38 @@ g13 = scatter(window_sizes, av_0.shape)
 
 
 
-g21 = scatter(window_sizes, av_0.location, xticks=1:1:13,
-xlabel = " k ", ylabel = L"\sigma", mc="tomato2",  ms=3, ma=1)
-pl.plot!(window_sizes, av_0.location[1] ./ 2 .^(window_sizes .- 1))
 
 
-a = [1,9,8,38,3,29,5,3,19,0,93,3,7]
-moving_minimum(a, 3)
 
-moving_minimum2(a, 3)
+function EI_window_min2(orbits, window_sizes)
+    location_params = Float64[]
+    scale_params = Float64[]
+    EI = Float64[]
+    shape_params = Float64[]
+    
+    for windows in window_sizes
+        minimums = mapslices(x -> rollmin(x, windows), mat_orb, dims=1)
+        max_min = maximum(minimums, dims=1)[:]
 
-println(moving_minimum2(a, 3))
+        fit = gevfit(max_min)
 
-println(moving_minimum(a, 3))
+        EI_estimate = extremal_FerroSegers(max_min, 0.95)
+        location_1 = location(fit)
+        scale_1 = scale(fit)
+        shapes = shape(fit)
+
+        append!(location_params, location_1)
+        append!(scale_params, scale_1)
+        append!(EI, EI_estimate)
+        append!(shape_params, shapes)
+    end
+    return location_params, scale_params, EI, shape_params
+
+end
+
+
+pain = EI_window_min2(mat_orb, window_sizes)
+scatter(window_sizes, pain[1])
+pl.plot!(window_sizes, pain[1][1] ./ window_sizes)
+
+roll_min_matrix = mapslices(x -> rollmin(x, 3), mat_orb, dims=1)
