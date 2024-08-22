@@ -3,8 +3,8 @@ include("methods/chaotic_system_methods.jl")
 
 Random.seed!(1234)
 
-n_orbits = 10^3
-orbit_length = 10^6
+n_orbits = 10
+orbit_length = 5
 initial_conditions = collect(1/n_orbits : 1/n_orbits : 1)
 window_sizes = collect(1:10)
 a = 2   
@@ -15,7 +15,39 @@ p1 = 1/(sqrt(2))
 orbits = simulate_orbits(initial_conditions, a, orbit_length, pertubation, n_orbits)
 average_orbits = observable_two.(orbits, p0)
 mat_orb = reduce(hcat, average_orbits)
-av_est1 = EI_window_av(mat_orb, window_sizes)
+
+function moving_minimum4(matrix::Matrix{T}, window_size::Int) where T
+    rows, cols = size(matrix)
+    if window_size > rows
+        error("Window size must be less than or equal to the number of rows.")
+    end
+
+    # Initialize result matrix
+    result = Matrix{T}(undef, rows - window_size + 1, cols)
+
+    for col in 1:cols
+        for row in 1:(rows - window_size + 1)
+            window = matrix[row:(row + window_size - 1), col]
+            result[row, col] = minimum(window)
+        end
+    end
+
+    return result
+end
+
+
+moving_minimum4(mat_orb, 2)
+
+moving_minimum_matrix(mat_orb, 2)
+est = EI_window_av(mat_orb, window_sizes)
+
+scatter(window_sizes, est[1])
+pl.plot!(window_sizes, est[1][1] ./ window_sizes)
+
+scatter(window_sizes, est[2])
+pl.plot!(window_sizes, est[2][1]  ./ window_sizes)
+
+
 
 df4 = DataFrame(location = av_est1[1], scale = av_est1[2], EI = av_est1[3], shape = av_est[4])
 CSV.write("Data_csv/updated_data/av_0.csv", df4, delim=',', header=true)
@@ -142,3 +174,11 @@ xlabel = " k ", ylabel = L"\sigma", mc="tomato2",  ms=3, ma=1)
 pl.plot!(window_sizes, av_0.location[1] ./ 2 .^(window_sizes .- 1))
 
 
+a = [1,9,8,38,3,29,5,3,19,0,93,3,7]
+moving_minimum(a, 3)
+
+moving_minimum2(a, 3)
+
+println(moving_minimum2(a, 3))
+
+println(moving_minimum(a, 3))
