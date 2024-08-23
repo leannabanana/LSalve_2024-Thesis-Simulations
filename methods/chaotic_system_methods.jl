@@ -21,12 +21,13 @@ function chaotic_map(a, n_steps) #gives normal map
     return y_values
 end
 
-function T_mod_map(a, start, n) #gives composition n times
+function T_mod_map(a, start, n, pertubation) #gives composition n times
     y_values = Float64[]
+    normal_dist_t = Normal(0, pertubation)
     x = start
     
     for i in 1:n
-        x = (a*x) % 1
+        x = (a*x) % 1 + rand(normal_dist_t)
         push!(y_values, x) 
 
     end
@@ -39,10 +40,11 @@ function T_mod_map_noisey(a, start, n, pertubation)  #gives composition n times 
     normal_dist_t = Normal(0, pertubation)
     x = start
 
-    for i in 1:n-1
-        x = (a*x) % 1 + rand(normal_dist_t)
+    for i in 1:n
+        pain = rand(normal_dist_t)
+        x = (a*x) % 1 + pain
         push!(y_values, x) 
-
+        
     end
     return y_values
 end
@@ -151,4 +153,3 @@ function simulate_orbits(initial_conditions::Vector{Float64}, a, n_length, pertu
     end
     return all_orbits
 end
-

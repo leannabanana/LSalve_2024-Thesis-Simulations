@@ -7,7 +7,7 @@ n_orbits = 10^3
 orbit_length = 10^5
 initial_conditions = collect(1/n_orbits : 1/n_orbits : 1)
 window_sizes = collect(1:10)
-a = 3
+a = 2
 pertubation = 1/10^3
 p0 = 0
 p1 = 1/(sqrt(2))
@@ -15,15 +15,17 @@ p1 = 1/(sqrt(2))
 orbits = simulate_orbits(initial_conditions, a, orbit_length, pertubation, n_orbits)
 average_orbits = observable_two.(orbits, p1)
 mat_orb3 = reduce(hcat, average_orbits)
+testing = EI_window_min(mat_orb3, window_sizes)
 
-est = EI_window_av(mat_orb, window_sizes)
+scatter(window_sizes, testing[1])
+pl.plot!(window_sizes, testing[1][1] ./ 2 .^ (window_sizes .- 1))
 
-scatter(window_sizes, est[1])
-pl.plot!(window_sizes, est[1][1] ./ window_sizes)
+
+testing[2]
+
 
 scatter(window_sizes, est[2])
 pl.plot!(window_sizes, est[2][1]  ./ window_sizes)
-
 
 
 df4 = DataFrame(location = av_est1[1], scale = av_est1[2], EI = av_est1[3], shape = av_est[4])
@@ -131,7 +133,7 @@ g1 = scatter(window_sizes, av_12.scale, xticks=1:1:13,
  xlabel = " k ", ylabel = L"\sigma", mc="tomato2",  ms=3, ma=1)
 pl.plot!(window_sizes,  av_0.scale[1] ./ window_sizes)
 
-
+m_0
 g2 = scatter(window_sizes, av_12.location, xticks=1:1:13,
  xlabel = " k ", ylabel = L"\mu", mc="tomato2",  ms=3, ma=1)
 

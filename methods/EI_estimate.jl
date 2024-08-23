@@ -57,7 +57,7 @@ function EI_estimate_plot(orbits, window_size, x0)
 end
 
 # @btime EI_estimate_plot(orbits, 10, 0)
-println("x0 = 0 gets us 0.776479812607765 and x0 = 1/sqrt(2) = 1.0181")
+# println("x0 = 0 gets us 0.776479812607765 and x0 = 1/sqrt(2) = 1.0181")
 
 
 function EI_estimation_average(orbits, window_size)
@@ -192,9 +192,9 @@ function gumbel_window_min(orbits, window_sizes)
         scale_1 = scale(gumbelfit(max_min))
   
     
-        append!(location_params, location_1)
-        append!(scale_params, scale_1)
-        append!(EI, EI_estimate)
+        push!(location_params, location_1)
+        push!(scale_params, scale_1)
+        push!(EI, EI_estimate)
     
         end
         return location_params, scale_params, EI
