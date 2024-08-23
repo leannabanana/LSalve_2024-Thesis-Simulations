@@ -7,16 +7,15 @@ n_orbits = 10^3
 orbit_length = 10^5
 initial_conditions = collect(1/n_orbits : 1/n_orbits : 1)
 window_sizes = collect(1:10)
-a = 2   
+a = 3
 pertubation = 1/10^3
 p0 = 0
 p1 = 1/(sqrt(2))
 
 orbits = simulate_orbits(initial_conditions, a, orbit_length, pertubation, n_orbits)
-average_orbits = observable_two.(orbits, p0)
-mat_orb = reduce(hcat, average_orbits)
+average_orbits = observable_two.(orbits, p1)
+mat_orb3 = reduce(hcat, average_orbits)
 
-moving_minimum_matrix(mat_orb, 2)
 est = EI_window_av(mat_orb, window_sizes)
 
 scatter(window_sizes, est[1])
@@ -121,8 +120,8 @@ savefig(avfit,"Output_Images/updated_plots/gevfit_av__1sqrt2.pdf")
 
 ################ USING ONLY CSV 
 
-m_0 = CSV.read("Data_csv/updated_data/final_gevfit_min_0.csv", DataFrame)
-m_12 = CSV.read("Data_csv/updated_data/final_gevfit_min_1sqrt2_data.csv", DataFrame)
+m_0 = CSV.read("Data_csv/updated_data/min_0_fix.csv", DataFrame)
+m_12 = CSV.read("Data_csv/updated_data/min_12_fix.csv", DataFrame)
 
 av_0 = CSV.read("Data_csv/updated_data/av_0.csv", DataFrame)
 av_12 = CSV.read("Data_csv/updated_data/av_1sqrt2.csv", DataFrame)
@@ -131,24 +130,36 @@ av_12 = CSV.read("Data_csv/updated_data/av_1sqrt2.csv", DataFrame)
 g1 = scatter(window_sizes, av_12.scale, xticks=1:1:13,
  xlabel = " k ", ylabel = L"\sigma", mc="tomato2",  ms=3, ma=1)
 pl.plot!(window_sizes,  av_0.scale[1] ./ window_sizes)
-sigma_2 = av_0.scale[1] ./ window_sizes
+
 
 g2 = scatter(window_sizes, av_12.location, xticks=1:1:13,
  xlabel = " k ", ylabel = L"\mu", mc="tomato2",  ms=3, ma=1)
-pl.plot!(window_sizes, av_12.location[1] ./ window_sizes.^(2) .+ sigma_2.*log.(av_12.EI ./av_12.EI[1]) )
 
+pl.plot!(window_sizes, (av_12.location[1] ./ window_sizes) .+ (av_12.location[1] ./ exp.(2)))
+
+pl.plot(g1, g2, layout = (1,2), size=(600, 350), title = "independent average")
+
+exp.(2)
+est3 = EI_window_av(mat_orb3, window_sizes)
+
+
+scatter(window_sizes, est3[2])
+pl.plot!(window_sizes, est3[2][1] ./ window_sizes)
+
+
+scatter(window_sizes, est3[1])
+pl.plot!(window_sizes, (est3[1][1] ./ (window_sizes)) .+ (est3[1][1] ./ exp.(3)))
 
 
 g11 = scatter(window_sizes, av_0.scale, xticks=1:1:13,
 xlabel = " k ", ylabel = L"\sigma", mc="tomato2",  ms=3, ma=1)
-pl.plot!(window_sizes, av_0.scale[1]./ 2 .^(window_sizes .- 1))
 
-g13 = scatter(window_sizes, av_0.shape)
+pl.plot!(window_sizes, av_0.scale[1]./  window_sizes )
 
+g22 = scatter(window_sizes, av_0.location, xticks=1:1:13,
+xlabel = " k ", ylabel = L"\sigma", mc="tomato2",  ms=3, ma=1)
 
-
-
-
+pl.plot!(window_sizes, (0.11 .* av_0.location[1] ) ./ window_sizes )
 
 function EI_window_min2(orbits, window_sizes)
     location_params = Float64[]
@@ -175,10 +186,5 @@ function EI_window_min2(orbits, window_sizes)
     return location_params, scale_params, EI, shape_params
 
 end
-
-
-pain = EI_window_min2(mat_orb, window_sizes)
-scatter(window_sizes, pain[1])
-pl.plot!(window_sizes, pain[1][1] ./ window_sizes)
 
 roll_min_matrix = mapslices(x -> rollmin(x, 3), mat_orb, dims=1)
