@@ -4,7 +4,7 @@ include("methods/chaotic_system_methods.jl")
 Random.seed!(1234)
 
 n_orbits = 10^3
-orbit_length = 10^5
+orbit_length = 10^7
 initial_conditions = collect(1/n_orbits : 1/n_orbits : 1)
 window_sizes = collect(1:10)
 a = 2
@@ -13,13 +13,27 @@ p0 = 0
 p1 = 1/(sqrt(2))
 
 orbits = simulate_orbits(initial_conditions, a, orbit_length, pertubation, n_orbits)
-average_orbits = observable_two.(orbits, p1)
+average_orbits = observable_two.(orbits, 0)
 mat_orb3 = reduce(hcat, average_orbits)
-testing = EI_window_min(mat_orb3, window_sizes)
+testing = f_EI_window_min(mat_orb3, window_sizes)
 
+
+df10 = DataFrame(location = testing[1], scale = testing[2], EI = testing[3])
+
+
+
+
+simulate_orbits(0.001, 2, 10^6, pertubation, 1)
+
+
+CSV.write("Data_csv/updated_data/gumbel_12.csv", df10)
 scatter(window_sizes, testing[1])
+pl.plot!(window_sizes, testing[1][1] ./ window_sizes)
 pl.plot!(window_sizes, testing[1][1] ./ 2 .^ (window_sizes .- 1))
 
+
+scatter(window_sizes, testing[2])
+pl.plot!(window_sizes, testing[2][1] ./ window_sizes)
 
 testing[2]
 

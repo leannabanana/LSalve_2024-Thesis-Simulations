@@ -60,6 +60,33 @@ end
 # println("x0 = 0 gets us 0.776479812607765 and x0 = 1/sqrt(2) = 1.0181")
 
 
+function f_EI_window_min(orbits, window_sizes)
+    location_params = Vector{Vector{Float64}}(undef, length(window_sizes))
+    scale_params = Vector{Vector{Float64}}(undef, length(window_sizes))
+    EI = Vector{Float64}(undef, length(window_sizes))
+    shape_params = Vector{Vector{Float64}}(undef, length(window_sizes))
+    
+    Threads.@threads for i in 1:length(window_sizes)
+        windows = window_sizes[i]
+        minimums = moving_minimum_matrix(orbits, windows)
+        max_min = maximum(minimums, dims=1)[:]
+
+        fit = gumbelfit(max_min)
+
+        EI_estimate = extremal_FerroSegers(max_min, 0.95)
+        location_1 = location(fit)
+        scale_1 = scale(fit)
+        shapes = shape(fit)
+
+        location_params[i] = location_1
+        scale_params[i] = scale_1
+        EI[i] = EI_estimate
+        shape_params[i] = shapes
+    end
+    
+    return location_params, scale_params, EI, shape_params
+end
+
 function EI_estimation_average(orbits, window_size)
     # location_params = Vector{Float64}(undef,19)
     # scale_params = Vector{Float64}(undef, 19)
@@ -192,9 +219,9 @@ function gumbel_window_min(orbits, window_sizes)
         scale_1 = scale(gumbelfit(max_min))
   
     
-        push!(location_params, location_1)
-        push!(scale_params, scale_1)
-        push!(EI, EI_estimate)
+        append!(location_params, location_1)
+        append!(scale_params, scale_1)
+        append!(EI, EI_estimate)
     
         end
         return location_params, scale_params, EI
