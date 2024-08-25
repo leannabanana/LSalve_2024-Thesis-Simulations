@@ -130,10 +130,10 @@ end
 Random.seed!(1234)
 
 n_orbits = 10^3
-orbit_length = 11^6
+orbit_length = 10^5
 initial_conditions = collect(1/n_orbits : 1/n_orbits : 1)
 
-window_sizes = collect(1:3)
+window_sizes = collect(1:10)
 a = 2
 pertubation = 1/10^3
 p0 = 0
@@ -150,3 +150,12 @@ testing = f_EI_window_min(mat_orb3, window_sizes)
 parameters = DataFrame(location = vcat(testing[1]...), scale =  vcat(testing[2]...), EI = vcat(testing[3]...))
 
 CSV.write("gumbel_data_9.csv", parameters)
+
+df0 = CSV.read("gumbel_data_1.csv", DataFrame)
+df0.scale
+
+scatter(window_sizes, df0.scale)
+pl.plot!(window_sizes, df0.scale[1] ./ 2 .^(window_sizes .- 1))
+
+scatter(window_sizes, df0.location)
+pl.plot!(window_sizes, df0.location[1] ./ window_sizes )

@@ -26,8 +26,8 @@ df10 = DataFrame(location = testing[1], scale = testing[2], EI = testing[3])
 simulate_orbits(0.001, 2, 10^6, pertubation, 1)
 
 
-CSV.write("Data_csv/updated_data/gumbel_12.csv", df10)
-scatter(window_sizes, testing[1])
+df10 = CSV.read("Data_csv/updated_data/gumbel_12.csv", DataFrame)
+scatter(window_sizes, df10.location)
 pl.plot!(window_sizes, testing[1][1] ./ window_sizes)
 pl.plot!(window_sizes, testing[1][1] ./ 2 .^ (window_sizes .- 1))
 
@@ -138,20 +138,22 @@ savefig(avfit,"Output_Images/updated_plots/gevfit_av__1sqrt2.pdf")
 
 m_0 = CSV.read("Data_csv/updated_data/min_0_fix.csv", DataFrame)
 m_12 = CSV.read("Data_csv/updated_data/min_12_fix.csv", DataFrame)
-
+m13 = CSV.read("gumbel_data_9.csv", DataFrame)
+m14 = CSV.read("gumbel_data_1.csv", DataFrame)
 av_0 = CSV.read("Data_csv/updated_data/av_0.csv", DataFrame)
 av_12 = CSV.read("Data_csv/updated_data/av_1sqrt2.csv", DataFrame)
 
 
 g1 = scatter(window_sizes, av_12.scale, xticks=1:1:13,
  xlabel = " k ", ylabel = L"\sigma", mc="tomato2",  ms=3, ma=1)
-pl.plot!(window_sizes,  av_0.scale[1] ./ window_sizes)
+pl.plot!(window_sizes,  av_0.scale[1] ./ window_sizes .* exp.(2))
 
-m_0
+
 g2 = scatter(window_sizes, av_12.location, xticks=1:1:13,
  xlabel = " k ", ylabel = L"\mu", mc="tomato2",  ms=3, ma=1)
 
-pl.plot!(window_sizes, (av_12.location[1] ./ window_sizes) .+ (av_12.location[1] ./ exp.(2)))
+pl.plot!(window_sizes, (av_12.location[1] ./ window_sizes) .+ av_12.location[1] ./ exp.(2))
+
 
 pl.plot(g1, g2, layout = (1,2), size=(600, 350), title = "independent average")
 
@@ -159,23 +161,21 @@ exp.(2)
 est3 = EI_window_av(mat_orb3, window_sizes)
 
 
-scatter(window_sizes, est3[2])
-pl.plot!(window_sizes, est3[2][1] ./ window_sizes)
-
-
-scatter(window_sizes, est3[1])
-pl.plot!(window_sizes, (est3[1][1] ./ (window_sizes)) .+ (est3[1][1] ./ exp.(3)))
-
-
 g11 = scatter(window_sizes, av_0.scale, xticks=1:1:13,
 xlabel = " k ", ylabel = L"\sigma", mc="tomato2",  ms=3, ma=1)
+pl.plot!(window_sizes, av_0.scale[1]./ window_sizes)
 
-pl.plot!(window_sizes, av_0.scale[1]./  window_sizes )
 
 g22 = scatter(window_sizes, av_0.location, xticks=1:1:13,
 xlabel = " k ", ylabel = L"\sigma", mc="tomato2",  ms=3, ma=1)
 
-pl.plot!(window_sizes, (0.11 .* av_0.location[1] ) ./ window_sizes )
+pl.plot!(window_sizes, ( av_0.location[1] ) ./ 3 .* window_sizes )
+
+aaa = scatter(window_sizes, m14.scale)
+pl.plot!(window_sizes, m14.scale[1] ./   2 .^(window_sizes .- 1))
+
+
+log.(2)
 
 function EI_window_min2(orbits, window_sizes)
     location_params = Float64[]

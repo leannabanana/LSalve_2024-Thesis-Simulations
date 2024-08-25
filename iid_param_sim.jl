@@ -95,11 +95,8 @@ sigma_av = scatter(window_sizes, iid_case_av[3], legend=false, ylabel=L"σ", xla
 pl.plot!(window_sizes, iid_case[3][1] ./ 2 .^ (window_sizes .- 1 ))
 
 
-
 theta_av = pl.plot(window_sizes, iid_case_av[1], legend=false, ylabel=L"σ", xlabel=L"k")
 av_params = pl.plot(mus_av, sigma_av, size=(650, 400), layout=(1,2), plot_title="Simluated Exp(3) vs window size moving average")
-
-
 
 av_params_min = pl.plot(iid_case[2] .- iid_case[3][1].*log.(window_sizes), iid_case[2], legend=false, ylabel=L"\mu_k", xlabel=L"\mu = \mu_k - σ\log(k)", title=L"$\mu_k$ vs $\mu$ (moving minimum)")
 av_params_av = pl.plot(iid_case_av[2] .- iid_case_av[3][1].*log.(window_sizes), iid_case_av[2], legend=false, ylabel=L"\mu_k", xlabel=L"\mu = \mu_k - σ\log(k)", title=L"$\mu_k$ vs $\mu$  (moving average)")
