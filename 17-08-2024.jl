@@ -4,7 +4,7 @@ include("methods/chaotic_system_methods.jl")
 Random.seed!(1234)
 
 n_orbits = 10^3
-orbit_length = 10^7
+orbit_length = 5 * 10^6
 initial_conditions = collect(1/n_orbits : 1/n_orbits : 1)
 window_sizes = collect(1:10)
 a = 2
