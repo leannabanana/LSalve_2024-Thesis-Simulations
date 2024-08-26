@@ -4,7 +4,7 @@ include("methods/chaotic_system_methods.jl")
 Random.seed!(1234)
 
 n_orbits = 10^3
-orbit_length = 5 * 10^6
+orbit_length =  10^5
 initial_conditions = collect(1/n_orbits : 1/n_orbits : 1)
 window_sizes = collect(1:10)
 a = 2
@@ -13,9 +13,9 @@ p0 = 0
 p1 = 1/(sqrt(2))
 
 orbits = simulate_orbits(initial_conditions, a, orbit_length, pertubation, n_orbits)
-average_orbits = observable_two.(orbits, 0)
+average_orbits = observable_two.(orbits, p1)
 mat_orb3 = reduce(hcat, average_orbits)
-testing = f_EI_window_min(mat_orb3, window_sizes)
+testing = EI_window_av(mat_orb3, window_sizes)
 
 
 df10 = DataFrame(location = testing[1], scale = testing[2], EI = testing[3])
@@ -140,36 +140,44 @@ m_0 = CSV.read("Data_csv/updated_data/min_0_fix.csv", DataFrame)
 m_12 = CSV.read("Data_csv/updated_data/min_12_fix.csv", DataFrame)
 m13 = CSV.read("gumbel_data_9.csv", DataFrame)
 m14 = CSV.read("gumbel_data_1.csv", DataFrame)
+
+fun = CSV.read("Data_csv/updated_data/gumbel_12.csv", DataFrame)
+
 av_0 = CSV.read("Data_csv/updated_data/av_0.csv", DataFrame)
 av_12 = CSV.read("Data_csv/updated_data/av_1sqrt2.csv", DataFrame)
 
 
 g1 = scatter(window_sizes, av_12.scale, xticks=1:1:13,
- xlabel = " k ", ylabel = L"\sigma", mc="tomato2",  ms=3, ma=1)
-pl.plot!(window_sizes,  av_0.scale[1] ./ window_sizes .* exp.(2))
+xlabel = " k ", ylabel = L"\sigma", mc="tomato2",  ms=3, ma=1)
+pl.plot!(window_sizes,  av_0.scale[1] ./ window_sizes )
 
+scatter!(window_sizes, av_12.location, xticks=1:1:13,
+xlabel = " k ", ylabel = L"\mu", mc="tomato2",  ms=3, ma=1)
+pl.plot!(window_sizes, (av_12.location[1] .* 0.9  ./ window_sizes) .+ av_12.location[1] ./ exp.(2) )
+
+
+# could be this lol idk (1 .- 1 ./ exp.(2))
+### This is like, messed up lol
 
 g2 = scatter(window_sizes, av_12.location, xticks=1:1:13,
- xlabel = " k ", ylabel = L"\mu", mc="tomato2",  ms=3, ma=1)
-
+xlabel = " k ", ylabel = L"\mu", mc="tomato2",  ms=3, ma=1)
 pl.plot!(window_sizes, (av_12.location[1] ./ window_sizes) .+ av_12.location[1] ./ exp.(2))
 
 
 pl.plot(g1, g2, layout = (1,2), size=(600, 350), title = "independent average")
 
-exp.(2)
-est3 = EI_window_av(mat_orb3, window_sizes)
 
-
+### Periodic average
 g11 = scatter(window_sizes, av_0.scale, xticks=1:1:13,
 xlabel = " k ", ylabel = L"\sigma", mc="tomato2",  ms=3, ma=1)
-pl.plot!(window_sizes, av_0.scale[1]./ window_sizes)
-
+pl.plot!(window_sizes, (av_0.scale[1] ./ window_sizes))
 
 g22 = scatter(window_sizes, av_0.location, xticks=1:1:13,
 xlabel = " k ", ylabel = L"\sigma", mc="tomato2",  ms=3, ma=1)
+pl.plot!(window_sizes, ( av_0.location[1] ) ./  window_sizes )
 
-pl.plot!(window_sizes, ( av_0.location[1] ) ./ 3 .* window_sizes )
+
+### minimums
 
 aaa = scatter(window_sizes, m14.scale)
 pl.plot!(window_sizes, m14.scale[1] ./   2 .^(window_sizes .- 1))
@@ -204,3 +212,14 @@ function EI_window_min2(orbits, window_sizes)
 end
 
 roll_min_matrix = mapslices(x -> rollmin(x, 3), mat_orb, dims=1)
+
+
+g1 = scatter(window_sizes, testing[2], xticks=1:1:13,
+xlabel = " k ", ylabel = L"\sigma", mc="tomato2",  ms=3, ma=1)
+pl.plot!(window_sizes,  testing[2][1] ./ window_sizes )
+
+scatter!(window_sizes, testing[1], xticks=1:1:13,
+xlabel = " k ", ylabel = L"\mu", mc="tomato2",  ms=3, ma=1)
+pl.plot!(window_sizes, (testing[1][1]* 0.9 ./ window_sizes) .+ ( testing[2][1]) ./ testing[4][1])
+
+testing[1]
