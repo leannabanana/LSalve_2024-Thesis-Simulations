@@ -25,11 +25,10 @@ df10 = DataFrame(location = testing[1], scale = testing[2], EI = testing[3])
 
 simulate_orbits(0.001, 2, 10^6, pertubation, 1)
 
+df10 = CSV.read("Data_csv/updated_data/final_gevfit_min_0.csv", DataFrame)
 
-df10 = CSV.read("Data_csv/updated_data/gumbel_12.csv", DataFrame)
 scatter(window_sizes, df10.location)
-pl.plot!(window_sizes, testing[1][1] ./ window_sizes)
-pl.plot!(window_sizes, testing[1][1] ./ 2 .^ (window_sizes .- 1))
+pl.plot!(window_sizes, log.(df10.location[1] .+ log.(2 .^(   (window_sizes .-1) )) .* ((df10.EI ./ df10.EI[1]).^(df10.scale[1]))   )   )
 
 
 scatter(window_sizes, testing[2])
@@ -43,8 +42,14 @@ pl.plot!(window_sizes, est[2][1]  ./ window_sizes)
 
 
 df4 = DataFrame(location = av_est1[1], scale = av_est1[2], EI = av_est1[3], shape = av_est[4])
-CSV.write("Data_csv/updated_data/av_0.csv", df4, delim=',', header=true)
+df4 = CSV.read("Data_csv/updated_data/av_0.csv", DataFrame)
+scatter(window_sizes, df4.scale)
+pl.plot!(window_sizes, df4.scale[1] ./ window_sizes)
 
+scatter(window_sizes, log.(df4.location))
+plot(window_sizes, df4.location[1])
+
+df4.location[1]
 
 estimate = EI_window_min(mat_orb, window_sizes)
 
