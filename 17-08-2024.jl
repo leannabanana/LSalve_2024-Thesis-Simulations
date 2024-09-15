@@ -192,11 +192,17 @@ pl.plot!(window_sizes, ( av_0.location[1] ) ./  window_sizes )
 ### minimums
 
 aaa = scatter(window_sizes, m_0.location, xticks=1:1:13,
-xlabel = " k ", ylabel = L"\mu", mc="tomato2",  ms=3, ma=1)
-pl.plot!(window_sizes, m_0.location[1] .- log.(2 .^(window_sizes .+ 1)) .* (m_0.EI) .^(m_0.scale[1]) )
+xlabel = " k ", ylabel = L"\mu", mc="tomato2",  ms=3, ma=1, legend=false)
+pl.plot!(window_sizes, m_0.location[1].+ log.( (m_0.EI ./ m_0.EI[1]).^(m_0.scale[1]))  .- log.(2 .^(window_sizes .- 1)))
+
+savefig(aaa,"Output_Images/updated_plots/periodic_min.pdf")
+
+aaaaaa = scatter(window_sizes, m_0.scale, xticks=1:1:13,
+xlabel = " k ", ylabel = L"\sigma", mc="tomato2",  ms=3, ma=1, legend=false)
+pl.plot!(window_sizes, m_0.scale[1] ./ 2 .^(window_sizes .-1))
 
 
-
+savefig(aaaaaa,"Output_Images/updated_plots/periodic_min_scale.pdf")
 
 function EI_window_min2(orbits, window_sizes)
     location_params = Float64[]
