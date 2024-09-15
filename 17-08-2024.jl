@@ -114,16 +114,6 @@ e3 = scatter(window_sizes, gumbelestimate[3], xticks=1:1:13, xlabel = " k ", yla
 gumbelmin = pl.plot(e1, e2, e3, layout = @layout([A B ; C D]), size=(700,550), plot_title="Gumbel Fit", plot_titlevspan=0.04)
 savefig(gumbelmin,"Output_Images/18-08-2024/gumbel_min_1sqrt2.pdf")
 
-estimate_av = EI_window_av(mat_orb, window_sizes)
-
-estimate[2][1]
-
-model(k, a) = estimate_av[1][1] ./ k .+ (a[1] ./k).*log.(estimate_av[3] ./ estimate_av[3][1])
-a0 = [1.0]
-fit = curve_fit(model, window_sizes, estimate_av[1], a0)
-param = fit.param
-
-
 m1 = scatter(window_sizes, estimate_av[1], xticks=1:1:13, xlabel = " k ", ylabel = L"\mu", title=L"Moving av $x_0 = 0$", mc="tomato2", legend=false, ms=3, ma=1)
 pl.plot!(window_sizes, estimate_av[1][1] ./ window_sizes .+ (38.2271057231807 ./window_sizes).*log.(estimate_av[3] ./ estimate_av[3][1]))
 
@@ -143,8 +133,7 @@ savefig(avfit,"Output_Images/updated_plots/gevfit_av__1sqrt2.pdf")
 
 m_0 = CSV.read("Data_csv/updated_data/min_0_fix.csv", DataFrame)
 m_12 = CSV.read("Data_csv/updated_data/min_12_fix.csv", DataFrame)
-m13 = CSV.read("gumbel_data_9.csv", DataFrame)
-m14 = CSV.read("gumbel_data_1.csv", DataFrame)
+
 
 fun = CSV.read("Data_csv/updated_data/gumbel_12.csv", DataFrame)
 
@@ -152,17 +141,35 @@ av_0 = CSV.read("Data_csv/updated_data/av_0.csv", DataFrame)
 av_12 = CSV.read("Data_csv/updated_data/av_1sqrt2.csv", DataFrame)
 
 
+########### function to compute the thing
+
+function mu2(mu1, theta2, theta1, lambda::Float64, sigma::Float64)
+    results = []
+    for k in 1:10
+        sum_term = sum(log.(lambda .^(j .-1) .* (theta2 ./ theta1) .^sigma) for j in k:(k+k-1))
+        mu2 = mu1 + (1/k) * sum_term
+        push!(results, mu2)
+    end
+    return results
+end
+
+###############
+
 g1 = scatter(window_sizes, av_12.scale, xticks=1:1:13,
 xlabel = " k ", ylabel = L"\sigma", mc="tomato2",  ms=3, ma=1)
 pl.plot!(window_sizes,  av_0.scale[1] ./ window_sizes )
 
-scatter!(window_sizes, av_12.location, xticks=1:1:13,
+scatter(window_sizes, av_12.location, xticks=1:1:13,
 xlabel = " k ", ylabel = L"\mu", mc="tomato2",  ms=3, ma=1)
-pl.plot!(window_sizes, (av_12.location[1] .* 0.9  ./ window_sizes) .+ av_12.location[1] ./ exp.(2) )
+pl.plot!(window_sizes, av_12.location[1] .+ moving_average.( av_12.location , window_sizes))
 
 
-# could be this lol idk (1 .- 1 ./ exp.(2))
-### This is like, messed up lol
+updated_mu = mu2.(av_12.location[1], av_12.EI, av_12.EI[1], 2, av_12.scale[1])
+av_12.EI
+pl.plot!(window_sizes, moving_average.((av_12.location[1]), window_sizes))
+
+
+log.(2 .^(window_sizes .- 1) .* ( av_12.EI[1] ./ av_12.EI[1] ) .^(av_12.scale[1]))
 
 g2 = scatter(window_sizes, av_12.location, xticks=1:1:13,
 xlabel = " k ", ylabel = L"\mu", mc="tomato2",  ms=3, ma=1)
@@ -184,11 +191,12 @@ pl.plot!(window_sizes, ( av_0.location[1] ) ./  window_sizes )
 
 ### minimums
 
-aaa = scatter(window_sizes, m14.scale)
-pl.plot!(window_sizes, m14.scale[1] ./   2 .^(window_sizes .- 1))
+aaa = scatter(window_sizes, m_0.location, xticks=1:1:13,
+xlabel = " k ", ylabel = L"\mu", mc="tomato2",  ms=3, ma=1)
+pl.plot!(window_sizes, m_0.location[1] .- log.(2 .^(window_sizes .+ 1)) .* (m_0.EI) .^(m_0.scale[1]) )
 
 
-log.(2)
+
 
 function EI_window_min2(orbits, window_sizes)
     location_params = Float64[]

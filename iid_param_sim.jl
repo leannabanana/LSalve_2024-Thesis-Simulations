@@ -17,7 +17,7 @@ end
 ### Define window sizes
 window_sizes = collect(1:10)
 num_vectors = 10^3
-vector_size = 10^5
+vector_size = 10^3
 
 distribution = Exponential(5)
 
@@ -49,15 +49,15 @@ end
 #plots
 iid_case = rv_minimum(X_n, window_sizes)
 
+mus = scatter(window_sizes, iid_case[1], title="Gumbel Distribution Sampled from Exp(5)", legend=false, ylabel =L"\mu", xlabel = "k", mc = "indianred2", ms = 2.5)
+pl.plot!(window_sizes, iid_case[1][1] ./ window_sizes .+ iid_case[2][1].*log.(iid_case[3][1] ./ iid_case[3]) )
 
-mus = scatter(window_sizes, iid_case[1], title=L"μ", legend=false, xlabel = "k", mc = "indianred2", ms = 2.5)
-pl.plot!(window_sizes, iid_case[1][1] ./ window_sizes)
+sigma = scatter(window_sizes, iid_case[2], title="Gumbel Distribution Sampled from Exp(5)", legend=false, xlabel = "k", ylabel=L"\sigma",  mc = "indianred2", ms = 2.5)
+pl.plot!(window_sizes, iid_case[2][1]./window_sizes)
 
-sigma = scatter(window_sizes, iid_case[2], title=L"σ", legend=false, xlabel = "k",  mc = "indianred2", ms = 2.5)
-pl.plot!(window_sizes, exp.(-1 .* ( iid_case[2][1].*window_sizes)))
 
-exp.( (iid_case[2][1] .* window_sizes))
-iid_case[2]
+savefig(mus, "Output_Images/finalised_iid_plots/minimum_mu.pdf")
+savefig(sigma, "Output_Images/finalised_iid_plots/minimum_sigma.pdf")
 
 theta = scatter(window_sizes, iid_case[3], title=L"θ", legend=false, xlabel = "k",  mc = "indianred2", ms = 2.5)
 min_params_1 = pl.plot(mus, sigma, size=(650, 400), layout=(1,2), plot_title="Simluated Exp(3) vs window size moving minimum")
@@ -81,18 +81,25 @@ function rv_average(random_variables, window_sizes)
         append!(location_params, location_1)
         append!(scale_params, scale_1)
     end
-    return EI, location_params, scale_params
+    return location_params, scale_params, EI
 end
 
 #More plots
 iid_case_av = rv_average(X_n, window_sizes)
+scatter(window_sizes, iid_case_av[1])
+pl.plot!(window_sizes, 1.5 .* iid_case_av[1][1] ./( window_sizes .+ 1 ))
 
-mus_av = scatter(window_sizes, iid_case_av[2],legend=false, ylabel=L"μ", xlabel=L"k")
-pl.plot!(window_sizes, iid_case_av[2][1]./(window_sizes .- 1))
+
+mu_av = scatter(window_sizes, iid_case_av[1], title="Gumbel GEV Sampled from Exp(5) - Moving Average", legend=false, ylabel =L"\mu", xlabel = "k", mc = "indianred2", ms = 2.5)
+pl.plot!(window_sizes, iid_case_av[1][1]./(window_sizes) )
 
 
-sigma_av = scatter(window_sizes, iid_case_av[3], legend=false, ylabel=L"σ", xlabel=L"k")
-pl.plot!(window_sizes, iid_case[3][1] ./ 2 .^ (window_sizes .- 1 ))
+sigma_av = scatter(window_sizes, iid_case_av[2],  title="Gumbel GEV Sampled from Exp(5) - Moving Average", legend=false, ylabel =L"\sigma", xlabel = "k", mc = "indianred2", ms = 2.5)
+pl.plot!(window_sizes, iid_case_av[2][1] ./ window_sizes )
+
+savefig(mu_av, "Output_Images/finalised_iid_plots/av_mu.pdf")
+savefig(sigma_av, "Output_Images/finalised_iid_plots/minimum_sigma.pdf")
+
 
 
 theta_av = pl.plot(window_sizes, iid_case_av[1], legend=false, ylabel=L"σ", xlabel=L"k")
@@ -242,3 +249,27 @@ x_axis =  collect(10:size(X_n_mat)[1])
 
 savefig(μ_k_av,"Output_Images/dependent_vs_independent_params/location_param_theorem_av.pdf")
 savefig(σ_k_av,"Output_Images/dependent_vs_independent_params/scale_param_theorem_av.pdf")
+
+gumbel_dist = Gumbel(0, 1)
+
+# Dimensions of the matrix
+rows = 10^3
+cols = 10^4
+
+# Simulate the matrix
+matrix_gumbel = rand(gumbel_dist, rows, cols)
+
+
+iid = EI_window_av(matrix_gumbel, window_sizes)
+scatter(window_sizes, iid[1],  xticks=1:1:13, xlabel = " k ", ylabel = L"μ", title=L"Moving minimum $x_0 = 0$", mc="tomato2", ms=3, ma=1)
+pl.plot!(window_sizes, 2 .^log.(iid[1][1]./ window_sizes) .+ 2)
+
+
+iid2 = EI_window_min(matrix_gumbel, window_sizes)
+scatter(window_sizes, iid2[1],  xticks=1:1:13, xlabel = " k ", ylabel = L"\mu", title="Moving Minimum from an iid Gumbel distribution", mc="tomato2", ms=3, ma=1, legend=false)
+pl.plot!(window_sizes, iid2[1][1] ./ window_sizes .+ iid2[2][1].*log.(iid2[3] ./ iid2[3][1]))
+
+
+scatter(window_sizes, iid2[2],  xticks=1:1:13, xlabel = " k ", ylabel = L"\sigma", title="Moving Minimum from an iid Gumbel distribution", mc="tomato2", ms=3, ma=1, legend=false)
+pl.plot!(window_sizes, iid2[2][1] ./ window_sizes )
+
