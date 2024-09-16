@@ -159,10 +159,12 @@ g1 = scatter(window_sizes, av_12.scale, xticks=1:1:13,
 xlabel = " k ", ylabel = L"\sigma", mc="tomato2",  ms=3, ma=1)
 pl.plot!(window_sizes,  av_0.scale[1] ./ window_sizes )
 
-scatter(window_sizes, av_12.location, xticks=1:1:13,
+kirby2 = scatter(window_sizes, av_12.location, xticks=1:1:13, legend=false, title=L"Moving Average $x_0 = \frac{1}{\sqrt{2}}$",
 xlabel = " k ", ylabel = L"\mu", mc="tomato2",  ms=3, ma=1)
-pl.plot!(window_sizes, av_12.location[1] .+ moving_average.( av_12.location , window_sizes))
+pl.plot!(window_sizes, av_12.location[1]./window_sizes .- av_12.scale[1] .* log.( 1 ./ window_sizes))
 
+
+savefig(kirby2,"Output_Images/updated_plots/whattheheck_chaos.pdf")
 
 updated_mu = mu2.(av_12.location[1], av_12.EI, av_12.EI[1], 2, av_12.scale[1])
 av_12.EI
