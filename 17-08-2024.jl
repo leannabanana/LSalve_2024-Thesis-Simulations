@@ -143,15 +143,29 @@ av_12 = CSV.read("Data_csv/updated_data/av_1sqrt2.csv", DataFrame)
 
 ########### function to compute the thing
 
-function mu2(mu1, theta2, theta1, lambda::Float64, sigma::Float64)
-    results = []
-    for k in 1:10
-        sum_term = sum(log.(lambda .^(j .-1) .* (theta2 ./ theta1) .^sigma) for j in k:(k+k-1))
-        mu2 = mu1 + (1/k) * sum_term
-        push!(results, mu2)
+function mu2(μ1, i, window_sizes, λ, θ2, θ1, σ)
+    μ2_values = []
+    
+    for k in window_sizes
+        sum_term = sum.(log.(λ.^(i:k.-1)) .+ σ .* log.(θ2 ./ θ1)) ./ window_sizes
+        # final_values = μ1 .- sum_term
+        push!(μ2_values, sum_term)
     end
-    return results
+    return μ2_values
 end
+
+testing = mu2(av_0.location[1], 0, 10, 2, av_0.EI, av_0.EI[1], av_0.scale[1])
+
+testing = mu2(av_0.location[1], 0, 10, 2, av_0.EI, av_0.EI[1], av_0.scale[1])
+
+av_0.location[1] - (log.(2 ^(0)) + (av_0.scale[1]) .* log.(av_0.EI[1] ./ av_0.EI[1]) + log.(2 ^(1)) + (av_0.scale[1]) .* log.(av_0.EI[2] ./ av_0.EI[1]))/2
+
+
+av_0.location[1] - (log.(2 ^(0)) + (av_0.scale[1]) .* log.(av_0.EI[1] ./ av_0.EI[1]) + log.(2 ^(1)) + (av_0.scale[1]) .* log.(av_0.EI[2] ./ av_0.EI[1]) + log.(2 ^(2)) + (av_0.scale[1]) .* log.(av_0.EI[3] ./ av_0.EI[1]))/3
+
+av_0.location[1] - (log.(2 ^(0)) + (av_0.scale[1]) .* log.(av_0.EI[1] ./ av_0.EI[1]) + log.(2 ^(1)) + (av_0.scale[1]) .* log.(av_0.EI[2] ./ av_0.EI[1]) + log.(2 ^(2)) + (av_0.scale[1]) .* log.(av_0.EI[3] ./ av_0.EI[1]))/3
+
+
 
 ###############
 
@@ -182,20 +196,23 @@ pl.plot(g1, g2, layout = (1,2), size=(600, 350), title = "independent average")
 
 
 ### Periodic average
+
+nu_mu = mu2(av_0.location[1], 1, window_sizes, 2, av_0.EI, av_0.EI[1], av_0.scale[1])
+
 g11 = scatter(window_sizes, av_0.scale, xticks=1:1:13,
 xlabel = " k ", ylabel = L"\sigma", mc="tomato2",  ms=3, ma=1)
-pl.plot!(window_sizes, (av_0.scale[1] ./ window_sizes))
+pl.plot!(window_sizes, (av_0.scale[1]))
 
 g22 = scatter(window_sizes, av_0.location, xticks=1:1:13,
-xlabel = " k ", ylabel = L"\sigma", mc="tomato2",  ms=3, ma=1)
-pl.plot!(window_sizes, ( av_0.location[1] ) ./  window_sizes )
-
-
+xlabel = " k ", ylabel = L"\mu", mc="tomato2",  ms=3, ma=1)
+pl.plot!(window_sizes, testing)
+av_0.location[1]
+testing
 ### minimums
 
 aaa = scatter(window_sizes, m_0.location, xticks=1:1:13,
 xlabel = " k ", ylabel = L"\mu", mc="tomato2",  ms=3, ma=1, legend=false)
-pl.plot!(window_sizes, m_0.location[1].+ log.( (m_0.EI ./ m_0.EI[1]).^(m_0.scale[1]))  .- log.(2 .^(window_sizes .- 1)))
+pl.plot!(window_sizes, m_0.location[1].- log.( (m_0.EI ./ m_0.EI[1]).^(m_0.scale[1]))  .- log.(2 .^(window_sizes .- 1)))
 
 savefig(aaa,"Output_Images/updated_plots/periodic_min.pdf")
 
@@ -203,6 +220,18 @@ aaaaaa = scatter(window_sizes, m_0.scale, xticks=1:1:13,
 xlabel = " k ", ylabel = L"\sigma", mc="tomato2",  ms=3, ma=1, legend=false)
 pl.plot!(window_sizes, m_0.scale[1] ./ 2 .^(window_sizes .-1))
 
+
+######invariant min
+
+
+min12 = scatter(window_sizes, m_12.location, xticks=1:1:13,
+xlabel = " k ", ylabel = L"\mu", mc="tomato2",  ms=3, ma=1, legend=false)
+pl.plot!(window_sizes, m_12.location[1].- log.(2 .^(window_sizes .-1 ) .* ((m_12.EI) ./ m_12.EI[1]).^(m_12.scale[1]) ))
+ 
+
+minsigma = scatter(window_sizes, m_0.location,  xticks=1:1:13,
+xlabel = " k ", ylabel = L"\sigma", mc="tomato2",  ms=3, ma=1, legend=false)
+pl.plot!(window_sizes, m_0.scale[1] ./ window_sizes .- log.(2 .^(window_sizes .-1 ) .* ((m_12.EI) ./ m_12.EI[1]).^(m_12.scale[1]) ))
 
 savefig(aaaaaa,"Output_Images/updated_plots/periodic_min_scale.pdf")
 

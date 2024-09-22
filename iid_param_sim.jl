@@ -17,7 +17,7 @@ end
 ### Define window sizes
 window_sizes = collect(1:10)
 num_vectors = 10^3
-vector_size = 10^5
+vector_size = 10^3
 
 distribution = Exponential(5)
 
@@ -86,11 +86,9 @@ end
 
 #More plots
 iid_case_av = rv_average(X_n, window_sizes)
-kirby = scatter(window_sizes, iid_case_av[1], title = "Gumbel GEV Sampled from Exp(5) - Moving Average",  legend=false, ylabel =L"\mu", xlabel = "k", mc = "indianred2", ms = 4)
-pl.plot!(window_sizes, iid_case_av[1][1] ./ window_sizes .- iid_case_av[2][1].*log.( 1 ./ window_sizes ))
+scatter(window_sizes, iid_case_av[1])
+pl.plot!(window_sizes, 1.5 .* iid_case_av[1][1] ./( window_sizes .+ 1 ))
 
-
-savefig(kirby, "Output_Images/finalised_iid_plots/whattheheckisgoingon.pdf")
 
 mu_av = scatter(window_sizes, iid_case_av[1], title="Gumbel GEV Sampled from Exp(5) - Moving Average", legend=false, ylabel =L"\mu", xlabel = "k", mc = "indianred2", ms = 2.5)
 pl.plot!(window_sizes, iid_case_av[1][1]./(window_sizes) )
@@ -100,7 +98,7 @@ sigma_av = scatter(window_sizes, iid_case_av[2],  title="Gumbel GEV Sampled from
 pl.plot!(window_sizes, iid_case_av[2][1] ./ window_sizes )
 
 savefig(mu_av, "Output_Images/finalised_iid_plots/av_mu.pdf")
-savefig(sigma_av, "Output_Images/finalised_iid_plots/minimum_sigma.pdf")
+savefig(sigma_av, "Output_Images/finalised_iid_plots/av_sigma.pdf")
 
 
 
