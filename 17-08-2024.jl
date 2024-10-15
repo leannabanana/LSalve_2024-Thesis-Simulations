@@ -140,6 +140,8 @@ fun = CSV.read("Data_csv/updated_data/gumbel_12.csv", DataFrame)
 av_0 = CSV.read("Data_csv/updated_data/av_0.csv", DataFrame)
 av_12 = CSV.read("Data_csv/updated_data/av_1sqrt2.csv", DataFrame)
 
+av_12.EI
+
 
 ########### function to compute the thing
 
@@ -147,15 +149,17 @@ function mu2(μ1, i, window_sizes, λ, θ2, θ1, σ)
     μ2_values = []
     
     for k in window_sizes
-        sum_term = sum.(log.(λ.^(i:k.-1)) .+ σ .* log.(θ2 ./ θ1)) ./ window_sizes
-        # final_values = μ1 .- sum_term
-        push!(μ2_values, sum_term)
+        sum_term = sum.(log.(λ.^(i:k.-1)) .+ σ .* log.(θ2 ./ θ1)) ./ k
+        final_values = μ1 .- sum_term
+        push!(μ2_values, final_values)
     end
     return μ2_values
 end
 
 testing = mu2(av_0.location[1], 0, 10, 2, av_0.EI, av_0.EI[1], av_0.scale[1])
 
+
+av_0.location[1] .- sum.(log.(2 .^(0:2-1)) .+ av_0.scale[1] .* log.(av_0.EI[2] ./ av_0.EI[1])) ./ 2
 testing = mu2(av_0.location[1], 0, 10, 2, av_0.EI, av_0.EI[1], av_0.scale[1])
 
 av_0.location[1] - (log.(2 ^(0)) + (av_0.scale[1]) .* log.(av_0.EI[1] ./ av_0.EI[1]) + log.(2 ^(1)) + (av_0.scale[1]) .* log.(av_0.EI[2] ./ av_0.EI[1]))/2
@@ -171,11 +175,14 @@ av_0.location[1] - (log.(2 ^(0)) + (av_0.scale[1]) .* log.(av_0.EI[1] ./ av_0.EI
 
 g1 = scatter(window_sizes, av_12.scale, xticks=1:1:13,
 xlabel = " k ", ylabel = L"\sigma", mc="tomato2",  ms=3, ma=1)
-pl.plot!(window_sizes,  av_0.scale[1] ./ window_sizes )
+pl.plot!(window_sizes,  av_12.scale[1] ./ window_sizes )
 
 kirby2 = scatter(window_sizes, av_12.location, xticks=1:1:13, legend=false, title=L"Moving Average $x_0 = \frac{1}{\sqrt{2}}$",
 xlabel = " k ", ylabel = L"\mu", mc="tomato2",  ms=3, ma=1)
-pl.plot!(window_sizes, av_12.location[1]./window_sizes .- av_12.scale[1] .* log.( 1 ./ window_sizes))
+pl.plot!(window_sizes, av_12.location[1]./window_sizes  .- av_12.scale[1] ./ window_sizes .* log.( 1 ./ window_sizes))
+
+
+av_12.EI
 
 
 savefig(kirby2,"Output_Images/updated_plots/whattheheck_chaos.pdf")
