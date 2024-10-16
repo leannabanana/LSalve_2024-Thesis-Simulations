@@ -94,16 +94,14 @@ GeneralizedExtremeValue(0, 1, 1)
 
 
 x = -5:0.01:5  # Ensure x > 0 for Weibull and Fréchet distributions
-pdf_frechet = pdf.(GeneralizedExtremeValue(0, 1, 3)  , x)
+pdf_frechet = pdf.(GeneralizedExtremeValue(0, 1, 1/2)  , x)
 pdf_gumbel = pdf.(GeneralizedExtremeValue(0, 1, 0)  , x)
-pdf_weibull = pdf.(GeneralizedExtremeValue(0, 1, -3)  , x)
+pdf_weibull = pdf.(GeneralizedExtremeValue(0, 1, -1/2)  , x)
 
 # Plot the PDFs
-plot(x, pdf_frechet, label="Gumbel PDF", linewidth=2, legend=:topright, xlabel=L"x", ylabel=L"f(x)")
-plot!(x, pdf_gumbel, label="Weibull PDF", linewidth=2)
-plot!(x, pdf_weibull, label="Fréchet PDF", linewidth=2)
+hi = plot(x, pdf_frechet, label="Gumbel", linewidth=2, lc="gold1", legend=:topright, xlabel=L"x", ylabel=L"f(x)")
+plot!(x, pdf_gumbel, label="Weibull", linewidth=2, lc="lightslateblue")
+plot!(x, pdf_weibull, label="Fréchet", linewidth=2, lc="palevioletred1")
 
-# Add labels and title
-xlabel!("x")
-ylabel!("Density")
 title!("PDFs of Gumbel, Weibull, and Fréchet Distributions")
+savefig("gumbel_weibull_frechet_pdfs.pdf")
