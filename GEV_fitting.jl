@@ -74,3 +74,36 @@ draw(PDF("Output_Images/gev_diagnostic_tests/frecheee.pdf",25cm, 15cm), d11)
 #draw(PDF("Output_Images/gev_diagnostic_tests/weibull"*Date*".pdf", 25cm, 15cm), d3)
 Date = 3
 "Output_Images/gev_diagnostic_tests/gumbell"* string(Date) *".pdf"
+
+
+
+using Distributions
+using Plots
+using Late
+# Define the parameters for each distribution
+μ_gumbel, β_gumbel = 0.0, 1.0  # Gumbel distribution parameters
+λ_weibull, k_weibull = 1.0, 1.5  # Weibull distribution parameters
+α_frechet, s_frechet = 2.0, 1.0  # Fréchet distribution parameters
+
+# Create the distributions
+gumbel_dist = Gumbel(μ_gumbel, β_gumbel)
+weibull_dist = Weibull(k_weibull, λ_weibull)
+frechet_dist = Frechet(α_frechet, s_frechet)
+GeneralizedExtremeValue(0, 1, 1)  
+
+
+
+x = -5:0.01:5  # Ensure x > 0 for Weibull and Fréchet distributions
+pdf_frechet = pdf.(GeneralizedExtremeValue(0, 1, 3)  , x)
+pdf_gumbel = pdf.(GeneralizedExtremeValue(0, 1, 0)  , x)
+pdf_weibull = pdf.(GeneralizedExtremeValue(0, 1, -3)  , x)
+
+# Plot the PDFs
+plot(x, pdf_frechet, label="Gumbel PDF", linewidth=2, legend=:topright, xlabel=L"x", ylabel=L"f(x)")
+plot!(x, pdf_gumbel, label="Weibull PDF", linewidth=2)
+plot!(x, pdf_weibull, label="Fréchet PDF", linewidth=2)
+
+# Add labels and title
+xlabel!("x")
+ylabel!("Density")
+title!("PDFs of Gumbel, Weibull, and Fréchet Distributions")
