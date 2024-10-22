@@ -10,7 +10,7 @@ end
 x0 = 1/3          # Initial point near the fixed point
 epsilon = 1e-5    # Small perturbation (nearby point)
 x1 = x0 + epsilon # Perturbed point
-n_iters = 10      # Number of iterations
+n_iters = 2      # Number of iterations
 
 # Arrays to store iterates and distances
 x0_vals = [x0]
@@ -27,17 +27,12 @@ for i in 1:n_iters
 end
 
 # Plot the distance growth over iterations
-plot(0:n_iters, distances, marker=:o, lw=2, xlabel="Iteration", ylabel="Distance", yscale=:log10, 
+plot(f(x) distances, marker=:o, lw=2, xlabel="Iteration", ylabel="Distance", yscale=:log10, 
      title="Distance Growth between Perturbed and Fixed Points", legend=false)
 
 # Print the initial and final distances to see the expansion
 println("Initial distance: ", epsilon)
 println("Final distance after ", n_iters, " iterations: ", distances[end])
-
-
-
-
-using Plots
 
 # Define the map f(x) = 2x mod 1
 function f(x)
@@ -45,8 +40,8 @@ function f(x)
 end
 
 # Parameters
-n_points = 100  # Number of different initial conditions
-n_iters = 100   # Number of iterations
+n_points = 2  # Number of different initial conditions
+n_iters = 2   # Number of iterations
 
 # Arrays to store initial conditions and final values after n_iters
 initial_conditions = rand(n_points)  # Randomly generate initial conditions in [0, 1]
@@ -64,3 +59,37 @@ final_values
 # Plot final values against initial conditions
 scatter(initial_conditions, final_values, xlabel="Initial Condition (x_0)", ylabel="Value after $n_iters (x_n)",
         title="Final Values vs Initial Conditions for T(x) = 2x mod 1", legend=false, label="")
+
+
+
+
+function mod_map(x)
+    return 2 * x % 1
+end
+        
+function simulate_trajectory(x0, n)
+    trajectory = Float64[]
+    x = x0
+    for i in 1:n
+        push!(trajectory, x)
+        x = mod_map(x)
+    end
+    return trajectory
+end
+
+# Parameters
+n = 4  # Number of iterations
+x0_1 = 0.1  # Initial point for the first trajectory
+x0_2 = 0.12  # Initial point for the second trajectory
+
+# Simulate the trajectories
+trajectory_1 = simulate_trajectory(x0_1, n)
+trajectory_2 = simulate_trajectory(x0_2, n)
+trajectory_1
+# Plot the trajectories
+scatter(trajectory_1[1:end-1], trajectory_1[2:end], label = "x0 = $x0_1", mc="red", xlims=(0,1), ylims=(0,1))
+scatter!(trajectory_2[1:end-1], trajectory_1[2:end], label = "x0 = $x0_2", mc="pink")
+
+xlabel!(L"x_n")
+ylabel!(L"x_{n+1}")
+title!(L"T(x) = 2x(mod1)")

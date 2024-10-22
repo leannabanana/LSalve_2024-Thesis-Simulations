@@ -279,4 +279,3 @@ scatter!(window_sizes, testing[1], xticks=1:1:13,
 xlabel = " k ", ylabel = L"\mu", mc="tomato2",  ms=3, ma=1)
 pl.plot!(window_sizes, (testing[1][1]* 0.9 ./ window_sizes) .+ ( testing[2][1]) ./ testing[4][1])
 
-testing[1]
