@@ -78,7 +78,7 @@ function simulate_trajectory(x0, n)
 end
 
 # Parameters
-n = 4  # Number of iterations
+n = 1000  # Number of iterations
 x0_1 = 0.1  # Initial point for the first trajectory
 x0_2 = 0.12  # Initial point for the second trajectory
 
@@ -87,9 +87,56 @@ trajectory_1 = simulate_trajectory(x0_1, n)
 trajectory_2 = simulate_trajectory(x0_2, n)
 trajectory_1
 # Plot the trajectories
-scatter(trajectory_1[1:end-1], trajectory_1[2:end], label = "x0 = $x0_1", mc="red", xlims=(0,1), ylims=(0,1))
+new = scatter(trajectory_1[1:end-1], trajectory_1[2:end], label = "x0 = $x0_1", mc="red", xlims=(0,1), ylims=(0,1))
 scatter!(trajectory_2[1:end-1], trajectory_1[2:end], label = "x0 = $x0_2", mc="pink")
+
+
+anim = @animate for i in 2:n
+    scatter(trajectory_1[1:i-1], trajectory_1[2:i], label = "x0 = $x0_1", mc="red", xlims=(0,1), ylims=(0,1))
+    scatter!(trajectory_2[1:i-1], trajectory_2[2:i], label = "x0 = $x0_2", mc="pink")
+    xlabel!(L"x_n")
+    ylabel!(L"x_{n+1}")
+    title!(L"T(x) = 2x(\text{mod}1)")
+end
+
+gif(anim, "chaos_animation.gif", fps = 2)
 
 xlabel!(L"x_n")
 ylabel!(L"x_{n+1}")
 title!(L"T(x) = 2x(mod1)")
+
+savefig(new, "new_chaos.pdf")
+
+
+# Define the parameters for the GEV distributions
+mu = 0          # location parameter
+sigma = 1       # scale parameter
+
+# Create the three types of GEV distributions
+gumbel = GeneralizedExtremeValue(0, 1, 0)          # Gumbel (Type I)
+frechet = GeneralizedExtremeValue(0, 1, 1/2)        # Fréchet (Type II)
+weibull = GeneralizedExtremeValue(0, 1, -1/2)        # Weibull (Type III)
+
+# Generate x values
+x = -5:0.1:5  # Range for x values
+
+# Calculate PDFs
+pdf_gumbel = pdf(gumbel, x)
+pdf_frechet = pdf(frechet, x)
+pdf_weibull = pdf(weibull, x)
+
+# Plot the PDFs
+gev = plot(x, pdf_gumbel, label="Gumbel; ξ = 0", color=:royalblue)
+plot!(x, pdf_frechet, label="Fréchet;  ξ = 1", color=:hotpink)
+plot!(x, pdf_weibull, label="Weibull;  ξ = -1", color=:purple)
+
+# Add titles and labels
+title!("PDFs of GEV Distributions")
+xlabel!(L"x")
+ylabel!(L"f(x)")
+
+
+savefig(gev,"Output_Images/18-08-2024/gumbel_min_1sqrt2.pdf")
+
+# Show the plot
+display(plot)
